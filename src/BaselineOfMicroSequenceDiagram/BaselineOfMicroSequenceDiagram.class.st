@@ -1,6 +1,6 @@
 Class {
 	#name : 'BaselineOfMicroSequenceDiagram',
-	#superclass : 'Object',
+	#superclass : 'BaselineOf',
 	#category : 'BaselineOfMicroSequenceDiagram',
 	#package : 'BaselineOfMicroSequenceDiagram'
 }
