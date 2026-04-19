@@ -60,31 +60,25 @@ Class {
 { #category : 'examples' }
 MicroUMLSDForCode class >> example1 [
 	<example>
-	self new forCode: [ Exp1 exp1Method1: 7. 2 timesRepeat: [ Exp2 new exp2Method1: 17]  ] inPackage: 'AIAExperiments'.
-]
-
-{ #category : 'examples' }
-MicroUMLSDForCode class >> example1_1 [
-	<example>
-	self new forCode: [ Exp1 exp1Method1: 3. Exp1 exp1Method1: 7. Exp2 new exp2Method1: 21   ] inPackage: 'AIAExperiments'.
+	self new forCode: [ (2/3) + (4/7) ] inPackage: ''.
 ]
 
 { #category : 'examples' }
 MicroUMLSDForCode class >> example2 [
 	<example>
-	self new forCode: [ Microdown asRichText: '## Joe' ] inPackage: 'Microdown'
+	self new forCode: [ Color blue + Color cyan ] inPackage: 'Colors'.
 ]
 
 { #category : 'examples' }
 MicroUMLSDForCode class >> example3 [
 	<example>
-	self new forCode: [ AIASourceCode forClass: MicroUMLSDForCode  ] inPackage: 'AIActions'
+	self new forCode: [ Microdown asRichText: '## Joe' ] inPackage: 'Microdown'
 ]
 
 { #category : 'examples' }
 MicroUMLSDForCode class >> example4 [
 	<example>
-	self new forCode: [ Exp3 new exp3Method2 ] inPackage: 'AIActions'
+	self new forCode: [ 'a(b*)c' asRegex ] inPackage: 'Regex-Core'
 ]
 
 { #category : 'internals' }
@@ -103,6 +97,7 @@ MicroUMLSDForCode >> ast10BuildMessageList [
 { #category : 'internals' }
 MicroUMLSDForCode >> ast12CheckPackageContext: context [
 	| boolean |
+	
 	boolean :=
 		(self classNameCheck: context sender methodClass ) or: [
 		self classNameCheck: context method methodClass  ].
@@ -137,10 +132,19 @@ MicroUMLSDForCode >> ast40Build [
 	self ast43BuildActors.
 	self ast46BuildMessages.
 	sd := MicroUMLSequenceDiagram from: astBuilder.
-	sd uiTitle: (packageName 
-		ifEmpty: [ 'All packages' ] 
-		ifNotEmpty: ['Package: ', packageName]).
+	sd uiTitle: self ast41Title .
 	sd build
+]
+
+{ #category : 'internals' }
+MicroUMLSDForCode >> ast41Title [
+	packageName isString ifTrue: [ 
+		packageName ifEmpty: [ ^ 'All packages' ].
+		^ 'Package: ', packageName ].
+	packageName isArray ifTrue: [ 
+		^ 'Package: ', packageName first , ' Tag: ', packageName second ] .
+	packageName isClass ifTrue: [ 
+		^ 'Class: ' , packageName name].
 ]
 
 { #category : 'internals' }
@@ -191,7 +195,16 @@ MicroUMLSDForCode >> ast48BuildExternalMessage: message [
 
 { #category : 'internals' }
 MicroUMLSDForCode >> classNameCheck: aClass [
-	packageName ifEmpty: [ ^ true ].
+	"Checks if a class belongs to the specified package or if no package is specified"
+
+	packageName isString ifTrue: [ 
+		packageName ifEmpty: [ ^ true ].
+		^ aClass package name  = packageName ].
+	packageName isArray ifTrue: [ 
+		^ (aClass package name  = packageName first) and: [ aClass packageTag name = packageName second ] ].
+	packageName isClass ifTrue: [ 
+		^ aClass = packageName ].
+self error: 'Should be a string, {packageName. tagName} or a class'.
 	^ aClass package name  = packageName
 	
 ]
@@ -214,6 +227,7 @@ MicroUMLSDForCode >> forCode: aBlock inPackage: pName [
 
 { #category : 'internals' }
 MicroUMLSDForCode >> forContext: aContextList inPackage: pName [
+self halt.
     packageName := pName.
     contextList := aContextList.
     self ast10BuildMessageList.
@@ -230,12 +244,16 @@ MicroUMLSDForCode >> initialize [
 
 { #category : 'inline' }
 MicroUMLSDForCode >> umlSPFor: message [
-
-	| idx cList subList |
+	| idx cList subList nextPackage |
 	idx := message fifth first.
 	cList := message fifth second.
 	subList := cList copyFrom: idx to: cList size.
+	packageName isString ifTrue: [ nextPackage := message second package name ].
+	packageName isArray ifTrue: [ 
+		nextPackage := { message second package name. message second packageTag name }] .
+	packageName isClass ifTrue: [ self halt].
+self halt.
 	self class new 
 		forContext: subList 
-		inPackage: message second package name
+		inPackage: nextPackage
 ]

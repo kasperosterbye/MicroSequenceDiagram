@@ -138,7 +138,6 @@ MicroUMLSDAstBuilder >> --> aString [
 	message := messages last.
 	messageType := #return.
 	message toActor ifNil: [ message toActor: message fromActor].
-
 	message
 			 description: aString;
 			 messageType: messageType;
