@@ -9,9 +9,9 @@ Class {
 		'astBuilder',
 		'lastMethod'
 	],
-	#category : 'MicroSequenceDiagram-MicroUML',
-	#package : 'MicroSequenceDiagram',
-	#tag : 'MicroUML'
+	#category : 'MicroSDExperiments-MicroURLMisc',
+	#package : 'MicroSDExperiments',
+	#tag : 'MicroURLMisc'
 }
 
 { #category : 'examples' }
