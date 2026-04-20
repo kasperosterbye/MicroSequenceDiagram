@@ -1,56 +1,80 @@
 "
-## Purpose
-`MicroUMLSDForCode` is a specialised analyser for dynamically generating UML sequence diagrams (SDs) from the runtime execution of Pharo code blocks. It captures the message-passing interactions between objects during block simulation, filtering them to focus exclusively on a nominated package (or all packages if unspecified). This enables developers to visualise live object collaborations, method calls, and returns as interactive sequence diagrams, aiding in debugging, refactoring, and comprehension of complex, dynamic behaviours in object-oriented systems. Instantiate once and invoke `forCode:inPackage:` to trace a block's execution; the result is a fully built `MicroUMLSequenceDiagram` with actors (classes), lifelines, synchronous/asynchronous messages (`=>`/`-->`), and activations.
+# MicroUMLSDForCode
 
-Use it when reverse-engineering sequence diagrams from **live code execution**—ideal for exploratory analysis of package-internal interactions, such as in experiments, UI flows, or algorithmic traces—rather than static source code parsing. It excels at revealing runtime realities like polymorphic dispatches, block closures, and repeated invocations that static tools might miss.
+**Purpose**: Dynamically generates UML sequence diagrams from live Pharo code execution, capturing inter-class message flows within specified package, tag, or class scopes. Analyses runtime execution contexts to visualise object interactions as MicroUML sequence diagrams, ideal for exploratory programming, debugging complex interactions, and documenting live code behaviour.
 
-## Main Collaborators and Dependencies
-- **`MicroUMLSDAstBuilder`**: Core dependency for constructing the diagram's abstract syntax tree (AST) via a fluent DSL (`&, ->, =>, -->, @` for actors, arrows, activations, and inline sub-sequences).
-- **`MicroUMLSequenceDiagram`**: Consumes the AST builder to render the final interactive UI diagram, complete with titles and presenter comments.
-- **Runtime contexts**: Relies on `thisContext runSimulated:contextAtEachStep:` for non-intrusively capturing sender/method/return states during block execution.
-- **Package ecosystem**: Tagged under `'MicroUML'`; integrates with `'MicroSequenceDiagram'`, `'AIActions'`, and `'AIAExperiments'` (as per examples). Actors leverage class comments via `AIAPresenter`.
+**Role in System**: Acts as a **runtime sequence diagram generator** that intercepts method contexts during block execution, filters messages by scope, builds an AST representation, and renders interactive visualisations. Bridges **live code execution** with **static UML documentation**.
 
-No external tools required; purely Pharo introspection-based.
+## Main Collaborators & Dependencies
 
-## Important Invariants and Design Constraints
-- **Package scoping**: All actors and messages are strictly filtered to classes in the specified `packageName` (empty string = global scope). Cross-package messages are rendered as package-external boundaries (`O` lifeline).
-- **Deduplication and self-exclusion**: Duplicate messages (sender/class/selector) are suppressed unless return states differ; self-messages from `MicroUMLSDForCode` are culled.
-- **Actor canonicalisation**: Actors are `OrderedDictionary`-keyed by class name strings; only classes (not instances) appear as lifelines, with comments as hover notes.
-- **Message semantics**: Synchronous calls use `=>` (non-return), returns use `-->`; constructors (`new`, `new:`) are ignored; inline sub-sequences spawn child diagrams via `umlSPFor:`.
-- **Simulation purity**: Block execution is simulated (no side-effects beyond captured contexts); order-preserving via `OrderedCollection`.
-- **Constraints**: Single-threaded; assumes pure message sends (handles loops/blocks); no support for primitives or FFI; package must exist at trace time.
+| Collaborator | Role |
+|--------------|------|
+| `MicroUMLSDAstBuilder` | Constructs sequence diagram AST from analysed messages |
+| `MicroUMLSequenceDiagram` | Renders final interactive visualisation |
+| `thisContext runSimulated:contextAtEachStep:` | Captures execution contexts during block simulation |
+| `OrderedCollection`, `OrderedDictionary` | Store contexts, messages, and scoped actions |
 
-Violating package filters yields empty diagrams; always specify `packageName` for precision.
+## Key Design Features & Invariants
 
-## Illustrative Usage Examples
-### Tracing Package Experiments
+1. **Scope Filtering**: Messages are filtered by package name, `{package, tag}` array, or specific class
+2. **Duplicate Elimination**: `ast15AddCheck:` prevents duplicate messages (same sender→receiver→selector)
+3. **Self-Filtering**: Excludes messages involving `MicroUMLSDForCode` itself
+4. **Recursive Scope Discovery**: `umlSPFor:` automatically extends analysis to discovered packages/tags
+5. **External vs Package Messages**: Distinguishes `=>` (synchronous) vs `-->` (return) arrows
+
+## Usage Patterns
+
+### 1. Package-Scoped Analysis (Recommended)
 ```smalltalk
-MicroUMLSDForCode new
-    forCode: [ Exp1 exp1Method1: 7. 2 timesRepeat: [ Exp2 new exp2Method1: 17 ] ]
-    inPackage: 'AIAExperiments'.
-```
-Generates a diagram showing `Exp1 >> exp1Method1:` self-looping into `Exp2 >> exp2Method1:` (twice), with `Exp1`/`Exp2` actors.
+""Visualise Color arithmetic within Colors package""
+MicroUMLSDForCode new 
+    forCode: [ Color blue + Color cyan ] 
+    inPackage: 'Colors'.
 
-### Visualising Parser Flows
+""Analyse any package - auto-discovers scope""
+MicroUMLSDForCode new 
+    forCode: [ 'a(b*)c' asRegex ] 
+    inPackage: ''.
+```
+
+### 2. Block Extensions (Fluent API)
 ```smalltalk
-MicroUMLSDForCode new
-    forCode: [ Microdown asRichText: '## Joe' ]
-    inPackage: 'Microdown'.
-```
-Renders the message cascade from `Microdown class >> asRichText:` through parsing collaborators, highlighting async returns.
+""Chainable syntax for quick analysis""
+[ Microdown asRichText: '## Joe' ] sd: 'Microdown'.
 
-For sub-sequence drill-down, diagrams embed inline `umlSPFor:` activations.
+""Class-specific analysis""
+[ (2/3) + (4/7) ] sdClass.
+```
+
+### 3. Advanced: Custom Context Analysis
+```smalltalk
+""Analyse pre-captured contexts""
+MicroUMLSDForCode new 
+    forContext: someContextList 
+    inPackage: 'MyPackage'.
+```
+
+**When to Use**: 
+- ✅ Reverse-engineering unfamiliar library interactions
+- ✅ Documenting complex algorithms visually 
+- ✅ Debugging message flows in multi-class collaborations
+- ✅ Creating executable API documentation
+
+**Limitations**: 
+- Only captures **public messages** (method sends)
+- Requires packages/tags to exist at analysis time
+- Excludes block closures and primitive operations
 "
 Class {
 	#name : 'MicroUMLSDForCode',
 	#superclass : 'Object',
 	#instVars : [
-		'packageName',
 		'contextList',
 		'actions',
 		'messages',
 		'astBuilder',
-		'lastMethod'
+		'lastMethod',
+		'scope'
 	],
 	#category : 'MicroSequenceDiagram-MicroUML',
 	#package : 'MicroSequenceDiagram',
@@ -58,27 +82,51 @@ Class {
 }
 
 { #category : 'examples' }
-MicroUMLSDForCode class >> example1 [
+MicroUMLSDForCode class >> example10 [
 	<example>
-	self new forCode: [ (2/3) + (4/7) ] inPackage: ''.
+	self new forCode: [ (2/3) + (4/7) ] inScope: ''.
 ]
 
 { #category : 'examples' }
-MicroUMLSDForCode class >> example2 [
+MicroUMLSDForCode class >> example11 [
 	<example>
-	self new forCode: [ Color blue + Color cyan ] inPackage: 'Colors'.
+	[ (2/3) + (4/7) ] sd.
 ]
 
 { #category : 'examples' }
-MicroUMLSDForCode class >> example3 [
+MicroUMLSDForCode class >> example12 [
 	<example>
-	self new forCode: [ Microdown asRichText: '## Joe' ] inPackage: 'Microdown'
+	[ (2/3) + (4/7) ] sdClass.
+]
+
+{ #category : 'examples' }
+MicroUMLSDForCode class >> example20 [
+	<example>
+	self new forCode: [ Color blue + Color cyan ] inScope: 'Colors'.
+]
+
+{ #category : 'examples' }
+MicroUMLSDForCode class >> example21 [
+	<example>
+	[ Color blue + Color cyan ] sd: 'Colors'.
+]
+
+{ #category : 'examples' }
+MicroUMLSDForCode class >> example30 [
+	<example>
+	self new forCode: [ Microdown asRichText: '## Joe' ] inScope: 'Microdown'
+]
+
+{ #category : 'examples' }
+MicroUMLSDForCode class >> example31 [
+	<example>
+	self new forCode: [ Microdown asRichText: '## Joe' ] inScope: Microdown
 ]
 
 { #category : 'examples' }
 MicroUMLSDForCode class >> example4 [
 	<example>
-	self new forCode: [ 'a(b*)c' asRegex ] inPackage: 'Regex-Core'
+	self new forCode: [ 'a(b*)c' asRegex ] inScope: 'Regex-Core'
 ]
 
 { #category : 'internals' }
@@ -138,18 +186,18 @@ MicroUMLSDForCode >> ast40Build [
 
 { #category : 'internals' }
 MicroUMLSDForCode >> ast41Title [
-	packageName isString ifTrue: [ 
-		packageName ifEmpty: [ ^ 'All packages' ].
-		^ 'Package: ', packageName ].
-	packageName isArray ifTrue: [ 
-		^ 'Package: ', packageName first , ' Tag: ', packageName second ] .
-	packageName isClass ifTrue: [ 
-		^ 'Class: ' , packageName name].
+	scope isString ifTrue: [ 
+		scope ifEmpty: [ ^ 'All packages' ].
+		^ 'Package: ', scope ].
+	scope isArray ifTrue: [ 
+		^ 'Package: ', scope first , ' Tag: ', scope second ] .
+	scope isClass ifTrue: [ 
+		^ 'Class: ' , scope name].
 ]
 
 { #category : 'internals' }
 MicroUMLSDForCode >> ast43BuildActors [
-	packageName ~= '' ifTrue: [	astBuilder , 'O' ].
+	scope ~= '' ifTrue: [	astBuilder , 'O' ].
 	actions do: [ :actorClass | 
 		astBuilder , actorClass name asString @ [ AIAPresenter onComment: actorClass comment]].
 ]
@@ -195,28 +243,78 @@ MicroUMLSDForCode >> ast48BuildExternalMessage: message [
 
 { #category : 'internals' }
 MicroUMLSDForCode >> classNameCheck: aClass [
-	"Checks if a class belongs to the specified package or if no package is specified"
 
-	packageName isString ifTrue: [ 
-		packageName ifEmpty: [ ^ true ].
-		^ aClass package name  = packageName ].
-	packageName isArray ifTrue: [ 
-		^ (aClass package name  = packageName first) and: [ aClass packageTag name = packageName second ] ].
-	packageName isClass ifTrue: [ 
-		^ aClass = packageName ].
-self error: 'Should be a string, {packageName. tagName} or a class'.
-	^ aClass package name  = packageName
+	scope isString ifTrue: [ ^ self classNameCheckForString: aClass].
+	scope isArray ifTrue: [ ^ self classNameCheckForArray: aClass ].
+	scope isClass ifTrue: [ ^ self classNameCheckForClass: aClass ].
+	self error: 'Should be a string, {packageName. tagName} or a class'.
+	^ aClass package name  = scope
 	
+]
+
+{ #category : 'internals' }
+MicroUMLSDForCode >> classNameCheckForArray: aClass [
+	scope 
+		ifNotEmpty: [ 
+			^ (aClass package name  = scope first) and: [ aClass packageTag name = scope second ] ].
+	(self emptyPackageTestFor: aClass)
+		ifFalse: [ ^ false ]
+		ifTrue: [  
+			scope := { aClass package name . aClass packageTag name}. 
+			^ true]
+	
+]
+
+{ #category : 'internals' }
+MicroUMLSDForCode >> classNameCheckForClass: aClass [
+
+	scope ~= ProtoObject ifTrue: [ ^ aClass = scope].
+	(self emptyPackageTestFor: aClass)
+		ifFalse: [ ^ false ]
+		ifTrue: [  
+			scope := aClass. 
+			^ true]
+]
+
+{ #category : 'internals' }
+MicroUMLSDForCode >> classNameCheckForString: aClass [
+
+	scope 
+		ifEmpty: [ ^ true ]
+		ifNotEmpty: [  ^  aClass package name  = scope ].
+	
+	
+]
+
+{ #category : 'internals' }
+MicroUMLSDForCode >> emptyPackageTestFor: aClass [
+
+	| test |
+	test := aClass = self class or: [
+		        (BlockClosure allSubclasses , { BlockClosure } includes: aClass) or: [
+			        aClass = Context or: [ aClass = UndefinedObject ] ] ].
+	^ test not
 ]
 
 { #category : 'external' }
 MicroUMLSDForCode >> forCode: aBlock [
-	self forCode: aBlock inPackage: ''
+	self forCode: aBlock inScope: ''
 ]
 
 { #category : 'external' }
 MicroUMLSDForCode >> forCode: aBlock inPackage: pName [
-	packageName := pName.
+	scope := pName.
+	thisContext runSimulated: aBlock  contextAtEachStep: [ :context |
+			contextList add: context copy.
+			].
+	self ast10BuildMessageList.
+	self ast20ActionsFromMessages.
+	self ast40Build.
+]
+
+{ #category : 'external' }
+MicroUMLSDForCode >> forCode: aBlock inScope: sName [
+	scope := sName.
 	thisContext runSimulated: aBlock  contextAtEachStep: [ :context |
 			contextList add: context copy.
 			].
@@ -227,8 +325,16 @@ MicroUMLSDForCode >> forCode: aBlock inPackage: pName [
 
 { #category : 'internals' }
 MicroUMLSDForCode >> forContext: aContextList inPackage: pName [
-self halt.
-    packageName := pName.
+    scope := pName.
+    contextList := aContextList.
+    self ast10BuildMessageList.
+    self ast20ActionsFromMessages.
+    self ast40Build.
+]
+
+{ #category : 'internals' }
+MicroUMLSDForCode >> forContext: aContextList inScope: sName [
+    scope := sName.
     contextList := aContextList.
     self ast10BuildMessageList.
     self ast20ActionsFromMessages.
@@ -242,18 +348,18 @@ MicroUMLSDForCode >> initialize [
 	messages := OrderedCollection new.
 ]
 
-{ #category : 'inline' }
+{ #category : 'internals' }
 MicroUMLSDForCode >> umlSPFor: message [
 	| idx cList subList nextPackage |
 	idx := message fifth first.
 	cList := message fifth second.
 	subList := cList copyFrom: idx to: cList size.
-	packageName isString ifTrue: [ nextPackage := message second package name ].
-	packageName isArray ifTrue: [ 
+	scope isString ifTrue: [ nextPackage := message second package name ].
+	scope isArray ifTrue: [ 
 		nextPackage := { message second package name. message second packageTag name }] .
-	packageName isClass ifTrue: [ self halt].
-self halt.
+	scope isClass ifTrue: [
+		nextPackage :=message second.].
 	self class new 
 		forContext: subList 
-		inPackage: nextPackage
+		inScope: nextPackage
 ]
