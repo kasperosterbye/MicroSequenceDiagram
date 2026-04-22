@@ -66,7 +66,7 @@ MicroUMLSDForCode new
 - Excludes block closures and primitive operations
 "
 Class {
-	#name : 'MicroUMLSDForCode',
+	#name : 'MicroUMLSDForCode6',
 	#superclass : 'Object',
 	#instVars : [
 		'contextList',
@@ -74,109 +74,87 @@ Class {
 		'messages',
 		'astBuilder',
 		'lastMethod',
-		'scopeX'
+		'scope'
 	],
-	#category : 'MicroSequenceDiagram-MicroUML',
-	#package : 'MicroSequenceDiagram',
-	#tag : 'MicroUML'
+	#category : 'MicroSDExperiments-MicroURLMisc',
+	#package : 'MicroSDExperiments',
+	#tag : 'MicroURLMisc'
 }
 
 { #category : 'examples' }
-MicroUMLSDForCode class >> example10 [
+MicroUMLSDForCode6 class >> example10 [
 	<example>
 	self new forCode: [ (2/3) + (4/7) ] inScope: ''.
 ]
 
 { #category : 'examples' }
-MicroUMLSDForCode class >> example11 [
+MicroUMLSDForCode6 class >> example11 [
 	<example>
 	[ (2/3) + (4/7) ] sd.
 ]
 
 { #category : 'examples' }
-MicroUMLSDForCode class >> example12 [
+MicroUMLSDForCode6 class >> example12 [
 	<example>
 	[ (2/3) + (4/7) ] sdClass.
 ]
 
 { #category : 'examples' }
-MicroUMLSDForCode class >> example20 [
+MicroUMLSDForCode6 class >> example20 [
 	<example>
 	self new forCode: [ Color blue + Color cyan ] inScope: 'Colors'.
 ]
 
 { #category : 'examples' }
-MicroUMLSDForCode class >> example21 [
+MicroUMLSDForCode6 class >> example21 [
 	<example>
 	[ Color blue + Color cyan ] sd: 'Colors'.
 ]
 
 { #category : 'examples' }
-MicroUMLSDForCode class >> example30 [
+MicroUMLSDForCode6 class >> example30 [
 	<example>
 	self new forCode: [ Microdown asRichText: '## Joe' ] inScope: 'Microdown'
 ]
 
 { #category : 'examples' }
-MicroUMLSDForCode class >> example31 [
+MicroUMLSDForCode6 class >> example31 [
 	<example>
 	self new forCode: [ Microdown asRichText: '## Joe' ] inScope: Microdown
 ]
 
 { #category : 'examples' }
-MicroUMLSDForCode class >> example4 [
+MicroUMLSDForCode6 class >> example4 [
 	<example>
 	self new forCode: [ 'a(b*)c' asRegex ] inScope: 'Regex-Core'
 ]
 
 { #category : 'examples' }
-MicroUMLSDForCode class >> example40 [
+MicroUMLSDForCode6 class >> example40 [
 	<example>
 	self new forCode: [ 'a(b*)c' asRegex ] inScope: 'Regex-Core'
 ]
 
 { #category : 'examples' }
-MicroUMLSDForCode class >> example41 [
+MicroUMLSDForCode6 class >> example41 [
 	<example>
 	[ 'a(b*)c' asRegex ] sd: 'Regex-Core'
 ]
 
 { #category : 'examples' }
-MicroUMLSDForCode class >> example42 [
+MicroUMLSDForCode6 class >> example42 [
 	<example>
 	[ 'a(b*)c' asRegex ] sd: RxMatcher 
 ]
 
 { #category : 'examples' }
-MicroUMLSDForCode class >> example43 [
+MicroUMLSDForCode6 class >> example43 [
 	<example>
 	[ 'a(b*)c' asRegex ] sdClass 
 ]
 
-{ #category : 'external' }
-MicroUMLSDForCode class >> forCode: aBlock inScope: sName [
-	| subClass |
-	subClass := nil. 
-	sName isString ifTrue: [ subClass := MicroUMLSDForPackageCode new].
-	sName isArray ifTrue: [ subClass := MicroUMLSDForTagCode new ].
-	sName isClass ifTrue: [ subClass := MicroUMLSDForClassCode new ].
-	subClass scope: sName.
-	subClass forCode: aBlock
-]
-
 { #category : 'internals' }
-MicroUMLSDForCode class >> forContext: aContextList inScope: sName [
-	| subClass |
-	subClass := nil. 
-	sName isString ifTrue: [ subClass := MicroUMLSDForPackageCode new].
-	sName isArray ifTrue: [ subClass := MicroUMLSDForTagCode new ].
-	sName isClass ifTrue: [ subClass := MicroUMLSDForClassCode new ].
-	subClass scope: sName.
-   subClass forContext: aContextList
-]
-
-{ #category : 'internals' }
-MicroUMLSDForCode >> ast10BuildMessageList [
+MicroUMLSDForCode6 >> ast10BuildMessageList [
 	| messageCandidate |
 	contextList doWithIndex: [ :context :index | 
 		(self ast12CheckPackageContext: context )
@@ -189,7 +167,7 @@ MicroUMLSDForCode >> ast10BuildMessageList [
 ]
 
 { #category : 'internals' }
-MicroUMLSDForCode >> ast12CheckPackageContext: context [
+MicroUMLSDForCode6 >> ast12CheckPackageContext: context [
 	| boolean |
 	
 	boolean :=
@@ -199,7 +177,7 @@ MicroUMLSDForCode >> ast12CheckPackageContext: context [
 ]
 
 { #category : 'internals' }
-MicroUMLSDForCode >> ast15AddCheck: messageCandidate [ 
+MicroUMLSDForCode6 >> ast15AddCheck: messageCandidate [ 
 	messages reverseDo: [ :trac |
 		(messageCandidate first: 3) = (trac first: 3)
 			ifTrue: [ ^ messageCandidate fourth ~= trac fourth ].
@@ -208,7 +186,7 @@ MicroUMLSDForCode >> ast15AddCheck: messageCandidate [
 ]
 
 { #category : 'internals' }
-MicroUMLSDForCode >> ast20ActionsFromMessages [
+MicroUMLSDForCode6 >> ast20ActionsFromMessages [
 	| me |
 	me := self class name.
 	messages := messages select: [ :m | m first name ~= me and: [ m second name ~= me ] ].
@@ -220,7 +198,7 @@ MicroUMLSDForCode >> ast20ActionsFromMessages [
 ]
 
 { #category : 'internals' }
-MicroUMLSDForCode >> ast40Build [
+MicroUMLSDForCode6 >> ast40Build [
 	| sd |
 	astBuilder := MicroUMLSDAstBuilder new. 
 	self ast43BuildActors.
@@ -231,17 +209,25 @@ MicroUMLSDForCode >> ast40Build [
 ]
 
 { #category : 'internals' }
-MicroUMLSDForCode >> ast41Title [
-	self subclassResponsibility 
+MicroUMLSDForCode6 >> ast41Title [
+	scope isString ifTrue: [ 
+		scope ifEmpty: [ ^ 'All packages' ].
+		^ 'Package: ', scope ].
+	scope isArray ifTrue: [ 
+		^ 'Package: ', scope first , ' Tag: ', scope second ] .
+	scope isClass ifTrue: [ 
+		^ 'Class: ' , scope name].
 ]
 
 { #category : 'internals' }
-MicroUMLSDForCode >> ast43BuildActors [
-	self subclassResponsibility 
+MicroUMLSDForCode6 >> ast43BuildActors [
+	scope ~= '' ifTrue: [	astBuilder , 'O' ].
+	actions do: [ :actorClass | 
+		astBuilder , actorClass name asString @ [ AIAPresenter onComment: actorClass comment]].
 ]
 
 { #category : 'internals' }
-MicroUMLSDForCode >> ast46BuildMessages [
+MicroUMLSDForCode6 >> ast46BuildMessages [
     messages do: [ :message |
 		  ((self classNameCheck: message first) and: [ self classNameCheck: message second ])
             ifTrue: [ self ast48BuildExternalMessage: message ]
@@ -249,7 +235,7 @@ MicroUMLSDForCode >> ast46BuildMessages [
 ]
 
 { #category : 'internals' }
-MicroUMLSDForCode >> ast47BuildPackageMessage: message [
+MicroUMLSDForCode6 >> ast47BuildPackageMessage: message [
 	| ignoreList|
 	ignoreList := { 'new'. 'new:' } asSet.
 	(self classNameCheck: message first)
@@ -268,7 +254,7 @@ MicroUMLSDForCode >> ast47BuildPackageMessage: message [
 ]
 
 { #category : 'internals' }
-MicroUMLSDForCode >> ast48BuildExternalMessage: message [
+MicroUMLSDForCode6 >> ast48BuildExternalMessage: message [
 	message first = message second
 		ifTrue: [
 				message fourth
@@ -280,14 +266,52 @@ MicroUMLSDForCode >> ast48BuildExternalMessage: message [
 ]
 
 { #category : 'internals' }
-MicroUMLSDForCode >> classNameCheck: aClass [
+MicroUMLSDForCode6 >> classNameCheck: aClass [
 
-	self subclassResponsibility.
+	scope isString ifTrue: [ ^ self classNameCheckForString: aClass].
+	scope isArray ifTrue: [ ^ self classNameCheckForArray: aClass ].
+	scope isClass ifTrue: [ ^ self classNameCheckForClass: aClass ].
+	self error: 'Should be a string, {packageName. tagName} or a class'.
+	^ aClass package name  = scope
 	
 ]
 
 { #category : 'internals' }
-MicroUMLSDForCode >> emptyPackageTestFor: aClass [
+MicroUMLSDForCode6 >> classNameCheckForArray: aClass [
+	scope 
+		ifNotEmpty: [ 
+			^ (aClass package name  = scope first) and: [ aClass packageTag name = scope second ] ].
+	(self emptyPackageTestFor: aClass)
+		ifFalse: [ ^ false ]
+		ifTrue: [  
+			scope := { aClass package name . aClass packageTag name}. 
+			^ true]
+	
+]
+
+{ #category : 'internals' }
+MicroUMLSDForCode6 >> classNameCheckForClass: aClass [
+
+	scope ~= ProtoObject ifTrue: [ ^ aClass = scope].
+	(self emptyPackageTestFor: aClass)
+		ifFalse: [ ^ false ]
+		ifTrue: [  
+			scope := aClass. 
+			^ true]
+]
+
+{ #category : 'internals' }
+MicroUMLSDForCode6 >> classNameCheckForString: aClass [
+
+	scope 
+		ifEmpty: [ ^ true ]
+		ifNotEmpty: [  ^  aClass package name  = scope ].
+	
+	
+]
+
+{ #category : 'internals' }
+MicroUMLSDForCode6 >> emptyPackageTestFor: aClass [
 
 	| test |
 	test := aClass = self class or: [
@@ -297,17 +321,13 @@ MicroUMLSDForCode >> emptyPackageTestFor: aClass [
 ]
 
 { #category : 'external' }
-MicroUMLSDForCode >> forCode: aBlock [
-	thisContext runSimulated: aBlock  contextAtEachStep: [ :context |
-			contextList add: context copy.
-			].
-	self ast10BuildMessageList.
-	self ast20ActionsFromMessages.
-	self ast40Build.
+MicroUMLSDForCode6 >> forCode: aBlock [
+	self forCode: aBlock inScope: ''
 ]
 
 { #category : 'external' }
-MicroUMLSDForCode >> forCode: aBlock inScope: sName [
+MicroUMLSDForCode6 >> forCode: aBlock inScope: sName [
+	scope := sName.
 	thisContext runSimulated: aBlock  contextAtEachStep: [ :context |
 			contextList add: context copy.
 			].
@@ -317,36 +337,50 @@ MicroUMLSDForCode >> forCode: aBlock inScope: sName [
 ]
 
 { #category : 'internals' }
-MicroUMLSDForCode >> forContext: aContextList [
+MicroUMLSDForCode6 >> forContext: aContextList inScope: sName [
+    scope := sName.
     contextList := aContextList.
     self ast10BuildMessageList.
     self ast20ActionsFromMessages.
     self ast40Build.
 ]
 
-{ #category : 'internals' }
-MicroUMLSDForCode >> forContext: aContextList inScope: sName [
-	self halt.
-    "scope := sName.
-    contextList := aContextList.
-    self ast10BuildMessageList.
-    self ast20ActionsFromMessages.
-    self ast40Build."
-]
-
 { #category : 'initialization' }
-MicroUMLSDForCode >> initialize [ 
+MicroUMLSDForCode6 >> initialize [ 
 	contextList := OrderedCollection new.
 	actions := OrderedDictionary new.
 	messages := OrderedCollection new.
 ]
 
-{ #category : 'accessing' }
-MicroUMLSDForCode >> scope: scope [
-	self subclassResponsibility 
+{ #category : 'internals' }
+MicroUMLSDForCode6 >> umlSPFor: message [
+	"Recursively analyses subsequent message flows within the same package or class scope, extending the sequence diagram to show deeper interactions."
+	| idx cList subList nextPackage |
+	idx := message fifth first.
+	cList := message fifth second.
+	subList := cList copyFrom: idx to: cList size.
+	scope isString ifTrue: [ nextPackage := message second package name ].
+	scope isArray ifTrue: [ 
+		nextPackage := { message second package name. message second packageTag name }] .
+	scope isClass ifTrue: [
+		nextPackage :=message second.].
+	self class new 
+		forContext: subList 
+		inScope: nextPackage
 ]
 
 { #category : 'internals' }
-MicroUMLSDForCode >> umlSPFor: message [
-	self subclassResponsibility 
+MicroUMLSDForCode6 >> xxx_umlSPFor: message [
+	| idx cList subList nextPackage |
+	idx := message fifth first.
+	cList := message fifth second.
+	subList := cList copyFrom: idx to: cList size.
+	scope isString ifTrue: [ nextPackage := message second package name ].
+	scope isArray ifTrue: [ 
+		nextPackage := { message second package name. message second packageTag name }] .
+	scope isClass ifTrue: [
+		nextPackage :=message second.].
+	self class new 
+		forContext: subList 
+		inScope: nextPackage
 ]

@@ -7,7 +7,7 @@ BlockClosure >> sd [
 
 { #category : '*MicroSequenceDiagram' }
 BlockClosure >> sd: packageName [
-	MicroUMLSDForCode new forCode: self inScope: packageName .
+	MicroUMLSDForCode forCode: self inScope: packageName .
 ]
 
 { #category : '*MicroSequenceDiagram' }
