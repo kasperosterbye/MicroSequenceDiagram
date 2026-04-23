@@ -41,7 +41,7 @@ MicroUMLSDForPackageCode >> umlSPFor: message [
 	idx := message fifth first.
 	cList := message fifth second.
 	subList := cList copyFrom: idx to: cList size.
-	 nextPackage := message second package name.
+	nextPackage := message second package name.
 	self class  
 		forContext: subList 
 		inScope: nextPackage

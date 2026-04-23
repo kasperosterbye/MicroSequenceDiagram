@@ -73,8 +73,7 @@ Class {
 		'actions',
 		'messages',
 		'astBuilder',
-		'lastMethod',
-		'scopeX'
+		'lastMethod'
 	],
 	#category : 'MicroSequenceDiagram-MicroUML',
 	#package : 'MicroSequenceDiagram',
@@ -84,7 +83,7 @@ Class {
 { #category : 'examples' }
 MicroUMLSDForCode class >> example10 [
 	<example>
-	self new forCode: [ (2/3) + (4/7) ] inScope: ''.
+	self forCode: [ (2/3) + (4/7) ] inScope: ''.
 ]
 
 { #category : 'examples' }
@@ -102,7 +101,7 @@ MicroUMLSDForCode class >> example12 [
 { #category : 'examples' }
 MicroUMLSDForCode class >> example20 [
 	<example>
-	self new forCode: [ Color blue + Color cyan ] inScope: 'Colors'.
+	self forCode: [ Color blue + Color cyan ] inScope: 'Colors'.
 ]
 
 { #category : 'examples' }
@@ -114,25 +113,25 @@ MicroUMLSDForCode class >> example21 [
 { #category : 'examples' }
 MicroUMLSDForCode class >> example30 [
 	<example>
-	self new forCode: [ Microdown asRichText: '## Joe' ] inScope: 'Microdown'
+	self forCode: [ Microdown asRichText: '## Joe' ] inScope: 'Microdown'
 ]
 
 { #category : 'examples' }
 MicroUMLSDForCode class >> example31 [
 	<example>
-	self new forCode: [ Microdown asRichText: '## Joe' ] inScope: Microdown
+	self forCode: [ Microdown asRichText: '## Joe' ] inScope: Microdown
 ]
 
 { #category : 'examples' }
 MicroUMLSDForCode class >> example4 [
 	<example>
-	self new forCode: [ 'a(b*)c' asRegex ] inScope: 'Regex-Core'
+	self forCode: [ 'a(b*)c' asRegex ] inScope: 'Regex-Core'
 ]
 
 { #category : 'examples' }
 MicroUMLSDForCode class >> example40 [
 	<example>
-	self new forCode: [ 'a(b*)c' asRegex ] inScope: 'Regex-Core'
+	self forCode: [ 'a(b*)c' asRegex ] inScope: 'Regex-Core'
 ]
 
 { #category : 'examples' }

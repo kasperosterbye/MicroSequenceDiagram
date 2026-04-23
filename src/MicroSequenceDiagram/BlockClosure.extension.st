@@ -22,7 +22,7 @@ BlockClosure >> sdPackage [
 ]
 
 { #category : '*MicroSequenceDiagram' }
-BlockClosure >> sdTab [
+BlockClosure >> sdTag [
 	"MicroUMLSDForCode new forCode: self inPackage: #() "
-	self sd: #()
+	self sd: #('' '')
 ]
