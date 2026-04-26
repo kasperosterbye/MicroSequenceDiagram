@@ -105,8 +105,8 @@ MicroUMLSequenceDiagram class >> diagram02 [
 MicroUMLSequenceDiagram class >> from: ast [
 	| instanse |
 	instanse := self new.
-	instanse actors: ast actors .
-	instanse messages: ast messages.
+	instanse actors: ast first .
+	instanse messages: ast second .
 	^ instanse
 ]
 
@@ -253,7 +253,7 @@ MicroUMLSequenceDiagram >> addReturn: aDescription from: fromName to: toName [
 { #category : 'roassal' }
 MicroUMLSequenceDiagram >> build [
 	"Constructs and displays the sequence diagram on a canvas"
-
+	self error: 'use renderDiagram'.
 	canvas := RSCanvas new.
 	self 
 		computeActorPositions;
@@ -344,6 +344,21 @@ MicroUMLSequenceDiagram >> messages [
 MicroUMLSequenceDiagram >> messages: anObject [
 	"Sets the collection of messages exchanged between actors in the sequence diagram"
 	messages := anObject
+]
+
+{ #category : 'roassal' }
+MicroUMLSequenceDiagram >> renderDiagram [
+	"Constructs and displays the sequence diagram on a canvas"
+
+	canvas := RSCanvas new.
+	self 
+		computeActorPositions;
+		computeMessagePositions;
+		drawActors;
+		drawLifelines;
+		drawMessages.
+	canvas @ RSCanvasController.
+	canvas openWithTitle: self uiTitle
 ]
 
 { #category : 'accessing' }

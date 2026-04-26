@@ -88,7 +88,7 @@ MicroUMLSDAstBuilder class >> example1 [
     & 'Login System' -> 'Database' => ('verify', String lf, 'Now') 
 			@ [  Transcript << 'Kilroy' << String lf  ]
     & 'Database' -> 'Playground' --> '')
-	build
+	renderDiagram.
 ]
 
 { #category : 'examples' }
@@ -104,7 +104,7 @@ MicroUMLSDAstBuilder class >> example2 [
     & 'Login System' -> 'Database' => ('verify', String lf, 'Now') 
 			@ [  Transcript << 'Kilroy' << String lf  ]
     & 'Database' -> 'Playground' --> '')
-	build
+	renderDiagram
 ]
 
 { #category : 'logical operations' }
@@ -188,8 +188,13 @@ MicroUMLSDAstBuilder >> actors [
 ]
 
 { #category : 'building' }
+MicroUMLSDAstBuilder >> actorsAndMessages [
+	^ { self actors. self messages }
+]
+
+{ #category : 'building' }
 MicroUMLSDAstBuilder >> build [
-	"Builds the sequence diagram from the constructed AST"
+	self error: 'Use renderDiagram instead' .
 	(MicroUMLSequenceDiagram from: self) build
 ]
 
@@ -212,4 +217,9 @@ MicroUMLSDAstBuilder >> messages [
 	"Returns the collection of messages exchanged between actors in the sequence diagram"
 
 	^ messages 
+]
+
+{ #category : 'building' }
+MicroUMLSDAstBuilder >> renderDiagram [
+	(MicroUMLSequenceDiagram from: self actorsAndMessages ) renderDiagram
 ]
