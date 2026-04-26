@@ -84,7 +84,7 @@ Class {
 { #category : 'examples' }
 MicroUMLSDForCode6 class >> example10 [
 	<example>
-	self new forCode: [ (2/3) + (4/7) ] inScope: ''.
+	self new forBlock: [ (2/3) + (4/7) ] inScope: ''.
 ]
 
 { #category : 'examples' }
@@ -102,7 +102,7 @@ MicroUMLSDForCode6 class >> example12 [
 { #category : 'examples' }
 MicroUMLSDForCode6 class >> example20 [
 	<example>
-	self new forCode: [ Color blue + Color cyan ] inScope: 'Colors'.
+	self new forBlock: [ Color blue + Color cyan ] inScope: 'Colors'.
 ]
 
 { #category : 'examples' }
@@ -114,25 +114,25 @@ MicroUMLSDForCode6 class >> example21 [
 { #category : 'examples' }
 MicroUMLSDForCode6 class >> example30 [
 	<example>
-	self new forCode: [ Microdown asRichText: '## Joe' ] inScope: 'Microdown'
+	self new forBlock: [ Microdown asRichText: '## Joe' ] inScope: 'Microdown'
 ]
 
 { #category : 'examples' }
 MicroUMLSDForCode6 class >> example31 [
 	<example>
-	self new forCode: [ Microdown asRichText: '## Joe' ] inScope: Microdown
+	self new forBlock: [ Microdown asRichText: '## Joe' ] inScope: Microdown
 ]
 
 { #category : 'examples' }
 MicroUMLSDForCode6 class >> example4 [
 	<example>
-	self new forCode: [ 'a(b*)c' asRegex ] inScope: 'Regex-Core'
+	self new forBlock: [ 'a(b*)c' asRegex ] inScope: 'Regex-Core'
 ]
 
 { #category : 'examples' }
 MicroUMLSDForCode6 class >> example40 [
 	<example>
-	self new forCode: [ 'a(b*)c' asRegex ] inScope: 'Regex-Core'
+	self new forBlock: [ 'a(b*)c' asRegex ] inScope: 'Regex-Core'
 ]
 
 { #category : 'examples' }
@@ -321,12 +321,7 @@ MicroUMLSDForCode6 >> emptyPackageTestFor: aClass [
 ]
 
 { #category : 'external' }
-MicroUMLSDForCode6 >> forCode: aBlock [
-	self forCode: aBlock inScope: ''
-]
-
-{ #category : 'external' }
-MicroUMLSDForCode6 >> forCode: aBlock inScope: sName [
+MicroUMLSDForCode6 >> forBlock: aBlock inScope: sName [
 	scope := sName.
 	thisContext runSimulated: aBlock  contextAtEachStep: [ :context |
 			contextList add: context copy.
@@ -334,6 +329,11 @@ MicroUMLSDForCode6 >> forCode: aBlock inScope: sName [
 	self ast10BuildMessageList.
 	self ast20ActionsFromMessages.
 	self ast40Build.
+]
+
+{ #category : 'external' }
+MicroUMLSDForCode6 >> forCode: aBlock [
+	self forBlock: aBlock inScope: ''
 ]
 
 { #category : 'internals' }

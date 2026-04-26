@@ -72,8 +72,7 @@ Class {
 		'contextList',
 		'actions',
 		'messages',
-		'astBuilder',
-		'lastMethod'
+		'astBuilder'
 	],
 	#category : 'MicroSequenceDiagram-MicroUML',
 	#package : 'MicroSequenceDiagram',
@@ -83,7 +82,7 @@ Class {
 { #category : 'examples' }
 MicroUMLSDForCode class >> example10 [
 	<example>
-	self forCode: [ (2/3) + (4/7) ] inScope: ''.
+	self forBlock: [ (2/3) + (4/7) ] inScope: ''.
 ]
 
 { #category : 'examples' }
@@ -101,7 +100,7 @@ MicroUMLSDForCode class >> example12 [
 { #category : 'examples' }
 MicroUMLSDForCode class >> example20 [
 	<example>
-	self forCode: [ Color blue + Color cyan ] inScope: 'Colors'.
+	self forBlock: [ Color blue + Color cyan ] inScope: 'Colors'.
 ]
 
 { #category : 'examples' }
@@ -113,25 +112,25 @@ MicroUMLSDForCode class >> example21 [
 { #category : 'examples' }
 MicroUMLSDForCode class >> example30 [
 	<example>
-	self forCode: [ Microdown asRichText: '## Joe' ] inScope: 'Microdown'
+	self forBlock: [ Microdown asRichText: '## Joe' ] inScope: 'Microdown'
 ]
 
 { #category : 'examples' }
 MicroUMLSDForCode class >> example31 [
 	<example>
-	self forCode: [ Microdown asRichText: '## Joe' ] inScope: Microdown
+	self forBlock: [ Microdown asRichText: '## Joe' ] inScope: Microdown
 ]
 
 { #category : 'examples' }
 MicroUMLSDForCode class >> example4 [
 	<example>
-	self forCode: [ 'a(b*)c' asRegex ] inScope: 'Regex-Core'
+	self forBlock: [ 'a(b*)c' asRegex ] inScope: 'Regex-Core'
 ]
 
 { #category : 'examples' }
 MicroUMLSDForCode class >> example40 [
 	<example>
-	self forCode: [ 'a(b*)c' asRegex ] inScope: 'Regex-Core'
+	self forBlock: [ 'a(b*)c' asRegex ] inScope: 'Regex-Core'
 ]
 
 { #category : 'examples' }
@@ -153,25 +152,23 @@ MicroUMLSDForCode class >> example43 [
 ]
 
 { #category : 'external' }
-MicroUMLSDForCode class >> forCode: aBlock inScope: sName [
-	| subClass |
-	subClass := nil. 
-	sName isString ifTrue: [ subClass := MicroUMLSDForPackageCode new].
-	sName isArray ifTrue: [ subClass := MicroUMLSDForTagCode new ].
-	sName isClass ifTrue: [ subClass := MicroUMLSDForClassCode new ].
-	subClass scope: sName.
-	subClass forCode: aBlock.
+MicroUMLSDForCode class >> forBlock: aBlock inScope: sName [
+	(self forScope: sName) forBlock: aBlock.
 ]
 
-{ #category : 'internals' }
+{ #category : 'external' }
 MicroUMLSDForCode class >> forContext: aContextList inScope: sName [
+   (self forScope: sName) forContext: aContextList
+]
+
+{ #category : 'external' }
+MicroUMLSDForCode class >> forScope: sName [
 	| subClass |
-	subClass := nil. 
 	sName isString ifTrue: [ subClass := MicroUMLSDForPackageCode new].
 	sName isArray ifTrue: [ subClass := MicroUMLSDForTagCode new ].
 	sName isClass ifTrue: [ subClass := MicroUMLSDForClassCode new ].
 	subClass scope: sName.
-   subClass forContext: aContextList
+	^ subClass 
 ]
 
 { #category : 'internals' }
@@ -296,11 +293,18 @@ MicroUMLSDForCode >> emptyPackageTestFor: aClass [
 ]
 
 { #category : 'external' }
-MicroUMLSDForCode >> forCode: aBlock [
-	| sd |
+MicroUMLSDForCode >> forBlock: aBlock [
+
+	contextList := OrderedCollection new.
 	thisContext runSimulated: aBlock  contextAtEachStep: [ :context |
 			contextList add: context copy.
 			].
+	self forCode
+]
+
+{ #category : 'external' }
+MicroUMLSDForCode >> forCode [
+	| sd |
 	self ast10BuildMessageList.
 	self ast20ActionsFromMessages.
 	self ast40Build.	
@@ -312,14 +316,9 @@ MicroUMLSDForCode >> forCode: aBlock [
 { #category : 'internals' }
 MicroUMLSDForCode >> forContext: aContextList [
 
-	| sd |
 	contextList := aContextList.
-	self ast10BuildMessageList.
-	self ast20ActionsFromMessages.
-	self ast40Build.
-	sd := MicroUMLSequenceDiagram fromActorsAndMessages: astBuilder actorsAndMessages.
-	sd uiTitle: self ast41Title.
-	sd renderDiagram
+	self forCode.
+	
 ]
 
 { #category : 'initialization' }
