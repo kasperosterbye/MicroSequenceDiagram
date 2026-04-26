@@ -124,13 +124,13 @@ MicroUMLSDAstBuilder >> @ aBlock [
 { #category : 'accessing' }
 MicroUMLSDAstBuilder >> actors [
 	"Returns the collection of actors in the sequence diagram"
-
+self halt.
 	^ actors values
 ]
 
 { #category : 'building' }
 MicroUMLSDAstBuilder >> actorsAndMessages [
-	^ { self actors. self messages }
+	^ { actors values. messages }
 ]
 
 { #category : 'building' }

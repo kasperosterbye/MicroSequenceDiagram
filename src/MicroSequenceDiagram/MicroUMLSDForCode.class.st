@@ -224,7 +224,7 @@ MicroUMLSDForCode >> ast40Build [
 	astBuilder := MicroUMLSDAstBuilder new. 
 	self ast43BuildActors.
 	self ast46BuildMessages.
-	sd := MicroUMLSequenceDiagram from: astBuilder actorsAndMessages.
+	sd := MicroUMLSequenceDiagram fromActorsAndMessages: astBuilder actorsAndMessages.
 	sd uiTitle: self ast41Title .
 	sd renderDiagram
 ]

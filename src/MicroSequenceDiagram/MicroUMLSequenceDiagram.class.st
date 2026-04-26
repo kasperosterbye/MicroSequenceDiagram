@@ -60,8 +60,6 @@ Class {
 	#instVars : [
 		'actors',
 		'messages',
-		'actorGap',
-		'lifelineHeight',
 		'canvas',
 		'uiTitle'
 	],
@@ -81,7 +79,7 @@ MicroUMLSequenceDiagram class >> diagram01 [
     sd addActor: 'Database'.
     sd addMessage: 'verify ' from: 'Login System' to: 'Database'.
     sd addReturn: 'return something long here' from: 'Database' to: 'Login System'.
-    sd build.
+    sd renderDiagram.
 ]
 
 { #category : 'examples' }
@@ -98,15 +96,24 @@ MicroUMLSequenceDiagram class >> diagram02 [
 	sd addInternal: 'Kilroy ' for: 'Database'.
 	sd addMessage: 'verify ' from: 'Login System' to: 'Database'.
 	sd addReturn: '' from: 'Database' to: 'Playground'.
-	sd build
+	sd renderDiagram
 ]
 
 { #category : 'instance creation' }
 MicroUMLSequenceDiagram class >> from: ast [
 	| instanse |
+	self error: 'Use fromActorsAndMessages: instead'.
 	instanse := self new.
 	instanse actors: ast first .
 	instanse messages: ast second .
+	^ instanse
+]
+
+{ #category : 'instance creation' }
+MicroUMLSequenceDiagram class >> fromActorsAndMessages: aAndM [
+	| instanse |
+	instanse := self new.
+	instanse actorsAndMessages: aAndM.
 	^ instanse
 ]
 
@@ -192,17 +199,9 @@ steps
 ]
 
 { #category : 'accessing' }
-MicroUMLSequenceDiagram >> actors [
-	"Returns the collection of actors in the sequence diagram"
-
-	^ actors
-]
-
-{ #category : 'accessing' }
-MicroUMLSequenceDiagram >> actors: anObject [
-	"Sets the collection of actors in the sequence diagram"
-
-	actors := anObject
+MicroUMLSequenceDiagram >> actorsAndMessages: aAndM [
+	actors := aAndM first.
+	messages := aAndM second
 ]
 
 { #category : 'construction' }
@@ -269,9 +268,9 @@ MicroUMLSequenceDiagram >> build [
 MicroUMLSequenceDiagram >> computeActorPositions [
 	"Computes the horizontal positions of actors based on message distances"
 
-	| currentX maxDistance |
-	currentX := actorGap.
-	actors first x: currentX.
+	| actorGap maxDistance |
+	actorGap := MicroUMLSDActor actorGap.
+	actors first x: actorGap.
 	2 to: actors size do: [ :index |
 			| a b messagesBetween |
 			a := actors at: index -1.
@@ -322,28 +321,17 @@ MicroUMLSequenceDiagram >> initialize [
 	"Initialises the sequence diagram with empty collections for actors and messages, and sets the default gap between actors"
 	actors := OrderedCollection new.
 	messages := OrderedCollection new.
-	actorGap := MicroUMLSDActor actorGap.
+	uiTitle := 'Sequence Diagram'.
+	"actorGap := MicroUMLSDActor actorGap."
 ]
 
 { #category : 'roassal' }
 MicroUMLSequenceDiagram >> lifelineHeight [
 	"Returns the total height of the lifeline based on the number of messages and fixed margins"
+	
     ^ MicroUMLSDMessages topMargin 
         + (messages size * MicroUMLSDMessages messageGap) 
         + MicroUMLSDMessages bottomMargin
-]
-
-{ #category : 'accessing' }
-MicroUMLSequenceDiagram >> messages [
-	"Returns the collection of messages exchanged between actors in the sequence diagram"
-
-	^ messages
-]
-
-{ #category : 'accessing' }
-MicroUMLSequenceDiagram >> messages: anObject [
-	"Sets the collection of messages exchanged between actors in the sequence diagram"
-	messages := anObject
 ]
 
 { #category : 'roassal' }
@@ -358,14 +346,7 @@ MicroUMLSequenceDiagram >> renderDiagram [
 		drawLifelines;
 		drawMessages.
 	canvas @ RSCanvasController.
-	canvas openWithTitle: self uiTitle
-]
-
-{ #category : 'accessing' }
-MicroUMLSequenceDiagram >> uiTitle [
-	"Returns the title of the sequence diagram, defaulting to 'Sequence Diagram' if not set"
-	uiTitle ifNil: [ ^ 'Sequence Diagram' ].
-	^ uiTitle
+	canvas openWithTitle: uiTitle
 ]
 
 { #category : 'accessing' }
