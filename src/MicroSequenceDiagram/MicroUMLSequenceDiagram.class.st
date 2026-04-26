@@ -68,37 +68,6 @@ Class {
 	#tag : 'MicroUML'
 }
 
-{ #category : 'examples' }
-MicroUMLSequenceDiagram class >> diagram01 [
-	"Creates a sequence diagram with two actors and a message exchange"
-	<example>
-
-    | sd |
-    sd := self new.
-    sd addActor: 'Login System'. 
-    sd addActor: 'Database'.
-    sd addMessage: 'verify ' from: 'Login System' to: 'Database'.
-    sd addReturn: 'return something long here' from: 'Database' to: 'Login System'.
-    sd renderDiagram.
-]
-
-{ #category : 'examples' }
-MicroUMLSequenceDiagram class >> diagram02 [
-	"Creates a sequence diagram with three actors and two message exchanges"
-
-	<example>
-	| sd |
-	sd := self new.
-	sd addActor: 'Playground'.
-	sd addActor: 'Database'.
-	sd addActor: 'Login System'.
-	sd addMessage: 'call ' from: 'Playground' to: 'Login System'.
-	sd addInternal: 'Kilroy ' for: 'Database'.
-	sd addMessage: 'verify ' from: 'Login System' to: 'Database'.
-	sd addReturn: '' from: 'Database' to: 'Playground'.
-	sd renderDiagram
-]
-
 { #category : 'instance creation' }
 MicroUMLSequenceDiagram class >> from: ast [
 	| instanse |
@@ -202,66 +171,6 @@ steps
 MicroUMLSequenceDiagram >> actorsAndMessages: aAndM [
 	actors := aAndM first.
 	messages := aAndM second
-]
-
-{ #category : 'construction' }
-MicroUMLSequenceDiagram >> add: type name: aDescription from: fromName to: toName [
-	"Adds a message of the specified type with the given description from one actor to another."
-    | message |
-    message := MicroUMLSDMessages new.
-    message
-        description: aDescription;
-        fromActor: (actors detect: [ :a | a name = fromName ]);
-        toActor: (actors detect: [ :a | a name = toName ]);
-        messageType: type.
-    messages add: message.
-    ^ message
-]
-
-{ #category : 'construction' }
-MicroUMLSequenceDiagram >> addActor: aString [
-	"Adds a new actor to the sequence diagram with the given name"
-
-	| actor |
-	actor := MicroUMLSDActor new.
-	actor
-		name: aString;
-		index: actors size + 1.
-	actors add: actor.
-	^ actor
-]
-
-{ #category : 'construction' }
-MicroUMLSequenceDiagram >> addInternal: aDescription for: actorName [
-	"Adds an internal message for a specified actor in the sequence diagram"
-	^ self add: #internal name: aDescription from: actorName to: actorName
-]
-
-{ #category : 'construction' }
-MicroUMLSequenceDiagram >> addMessage: aDescription from: fromName to: toName [
-	"Adds a message of the specified type with the given description from one actor to another."
-	^ self add: #call name: aDescription from: fromName to: toName
-]
-
-{ #category : 'construction' }
-MicroUMLSequenceDiagram >> addReturn: aDescription from: fromName to: toName [
-	"Adds a return message with the given description from one actor to another"
-	^ self add: #return name: aDescription from: fromName to: toName
-]
-
-{ #category : 'roassal' }
-MicroUMLSequenceDiagram >> build [
-	"Constructs and displays the sequence diagram on a canvas"
-	self error: 'use renderDiagram'.
-	canvas := RSCanvas new.
-	self 
-		computeActorPositions;
-		computeMessagePositions;
-		drawActors;
-		drawLifelines;
-		drawMessages.
-	canvas @ RSCanvasController.
-	canvas openWithTitle: self uiTitle
 ]
 
 { #category : 'roassal' }

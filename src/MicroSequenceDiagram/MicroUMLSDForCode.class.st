@@ -160,7 +160,7 @@ MicroUMLSDForCode class >> forCode: aBlock inScope: sName [
 	sName isArray ifTrue: [ subClass := MicroUMLSDForTagCode new ].
 	sName isClass ifTrue: [ subClass := MicroUMLSDForClassCode new ].
 	subClass scope: sName.
-	subClass forCode: aBlock
+	subClass forCode: aBlock.
 ]
 
 { #category : 'internals' }
@@ -224,9 +224,9 @@ MicroUMLSDForCode >> ast40Build [
 	astBuilder := MicroUMLSDAstBuilder new. 
 	self ast43BuildActors.
 	self ast46BuildMessages.
-	sd := MicroUMLSequenceDiagram fromActorsAndMessages: astBuilder actorsAndMessages.
+"	sd := MicroUMLSequenceDiagram fromActorsAndMessages: astBuilder actorsAndMessages.
 	sd uiTitle: self ast41Title .
-	sd renderDiagram
+	sd renderDiagram"
 ]
 
 { #category : 'internals' }
@@ -297,40 +297,29 @@ MicroUMLSDForCode >> emptyPackageTestFor: aClass [
 
 { #category : 'external' }
 MicroUMLSDForCode >> forCode: aBlock [
+	| sd |
 	thisContext runSimulated: aBlock  contextAtEachStep: [ :context |
 			contextList add: context copy.
 			].
 	self ast10BuildMessageList.
 	self ast20ActionsFromMessages.
-	self ast40Build.
-]
-
-{ #category : 'external' }
-MicroUMLSDForCode >> forCode: aBlock inScope: sName [
-	thisContext runSimulated: aBlock  contextAtEachStep: [ :context |
-			contextList add: context copy.
-			].
-	self ast10BuildMessageList.
-	self ast20ActionsFromMessages.
-	self ast40Build.
+	self ast40Build.	
+	sd := MicroUMLSequenceDiagram fromActorsAndMessages: astBuilder actorsAndMessages.
+	sd uiTitle: self ast41Title .
+	sd renderDiagram
 ]
 
 { #category : 'internals' }
 MicroUMLSDForCode >> forContext: aContextList [
-    contextList := aContextList.
-    self ast10BuildMessageList.
-    self ast20ActionsFromMessages.
-    self ast40Build.
-]
 
-{ #category : 'internals' }
-MicroUMLSDForCode >> forContext: aContextList inScope: sName [
-	self halt.
-    "scope := sName.
-    contextList := aContextList.
-    self ast10BuildMessageList.
-    self ast20ActionsFromMessages.
-    self ast40Build."
+	| sd |
+	contextList := aContextList.
+	self ast10BuildMessageList.
+	self ast20ActionsFromMessages.
+	self ast40Build.
+	sd := MicroUMLSequenceDiagram fromActorsAndMessages: astBuilder actorsAndMessages.
+	sd uiTitle: self ast41Title.
+	sd renderDiagram
 ]
 
 { #category : 'initialization' }

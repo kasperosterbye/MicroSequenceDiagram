@@ -121,22 +121,9 @@ MicroUMLSDAstBuilder >> @ aBlock [
 	^ self
 ]
 
-{ #category : 'accessing' }
-MicroUMLSDAstBuilder >> actors [
-	"Returns the collection of actors in the sequence diagram"
-self halt.
-	^ actors values
-]
-
 { #category : 'building' }
 MicroUMLSDAstBuilder >> actorsAndMessages [
 	^ { actors values. messages }
-]
-
-{ #category : 'building' }
-MicroUMLSDAstBuilder >> build [
-	self error: 'Use renderDiagram instead' .
-	(MicroUMLSequenceDiagram from: self) build
 ]
 
 { #category : 'initialization' }
@@ -153,14 +140,7 @@ MicroUMLSDAstBuilder >> lastMethod: meth [
 	lastMethod := meth
 ]
 
-{ #category : 'accessing' }
-MicroUMLSDAstBuilder >> messages [
-	"Returns the collection of messages exchanged between actors in the sequence diagram"
-
-	^ messages 
-]
-
 { #category : 'building' }
 MicroUMLSDAstBuilder >> renderDiagram [
-	(MicroUMLSequenceDiagram from: self actorsAndMessages ) renderDiagram
+	(MicroUMLSequenceDiagram fromActorsAndMessages: self actorsAndMessages ) renderDiagram
 ]
