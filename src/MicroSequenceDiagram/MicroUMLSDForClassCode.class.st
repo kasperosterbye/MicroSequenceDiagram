@@ -18,8 +18,7 @@ MicroUMLSDForClassCode >> ast41Title [
 { #category : 'internals' }
 MicroUMLSDForClassCode >> ast43BuildActors [
 	astBuilder , 'O'. 
-	actions do: [ :actorClass | 
-		astBuilder , actorClass name asString @ [ AIAPresenter onComment: actorClass comment]].
+	super ast43BuildActors.
 ]
 
 { #category : 'internals' }
@@ -33,13 +32,8 @@ MicroUMLSDForClassCode >> classNameCheck: aClass [
 				^ true ]
 ]
 
-{ #category : 'accessing' }
-MicroUMLSDForClassCode >> scope: scope [
-	classScope := scope 
-]
-
 { #category : 'internals' }
-MicroUMLSDForClassCode >> umlSPFor: message [
+MicroUMLSDForClassCode >> openSubDiagramFor: message [
 	| idx cList subList nextPackage |
 	idx := message fifth first.
 	cList := message fifth second.
@@ -48,4 +42,9 @@ MicroUMLSDForClassCode >> umlSPFor: message [
 	self class 
 		forContext: subList 
 		inScope: nextPackage
+]
+
+{ #category : 'accessing' }
+MicroUMLSDForClassCode >> scope: scope [
+	classScope := scope 
 ]

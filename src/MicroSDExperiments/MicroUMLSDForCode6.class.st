@@ -244,7 +244,7 @@ MicroUMLSDForCode6 >> ast47BuildPackageMessage: message [
 				message fourth ifFalse: [
 					astBuilder lastMethod: message fifth.
 					astBuilder & message first name => message third 
-						@ [ self umlSPFor: message ]] ]]
+						@ [ self openSubDiagramFor: message ]] ]]
 		ifFalse: [ 
 			message fourth
 					ifFalse: [ astBuilder & 'O' -> message second name => message third. ]
@@ -353,7 +353,7 @@ MicroUMLSDForCode6 >> initialize [
 ]
 
 { #category : 'internals' }
-MicroUMLSDForCode6 >> umlSPFor: message [
+MicroUMLSDForCode6 >> openSubDiagramFor: message [
 	"Recursively analyses subsequent message flows within the same package or class scope, extending the sequence diagram to show deeper interactions."
 	| idx cList subList nextPackage |
 	idx := message fifth first.

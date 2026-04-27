@@ -233,7 +233,8 @@ MicroUMLSDForCode >> ast41Title [
 
 { #category : 'internals' }
 MicroUMLSDForCode >> ast43BuildActors [
-	self subclassResponsibility 
+	actions do: [ :actorClass | 
+		astBuilder , actorClass name asString @ [ AIAPresenter onComment: actorClass comment]].
 ]
 
 { #category : 'internals' }
@@ -254,7 +255,7 @@ MicroUMLSDForCode >> ast47BuildPackageMessage: message [
 				message fourth ifFalse: [
 					astBuilder lastMethod: message fifth.
 					astBuilder & message first name => message third 
-						@ [ self umlSPFor: message ]] ]]
+						@ [ self openSubDiagramFor: message ]] ]]
 		ifFalse: [ 
 			message fourth
 					ifFalse: [ astBuilder & 'O' -> message second name => message third. ]
@@ -328,12 +329,12 @@ MicroUMLSDForCode >> initialize [
 	messages := OrderedCollection new.
 ]
 
-{ #category : 'accessing' }
-MicroUMLSDForCode >> scope: scope [
+{ #category : 'internals' }
+MicroUMLSDForCode >> openSubDiagramFor: message [
 	self subclassResponsibility 
 ]
 
-{ #category : 'internals' }
-MicroUMLSDForCode >> umlSPFor: message [
+{ #category : 'accessing' }
+MicroUMLSDForCode >> scope: scope [
 	self subclassResponsibility 
 ]

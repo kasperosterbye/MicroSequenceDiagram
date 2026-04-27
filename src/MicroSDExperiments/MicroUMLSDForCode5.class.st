@@ -125,7 +125,7 @@ MicroUMLSDForCode5 >> ast47BuildPackageMessage: message [
 				message fourth ifFalse: [
 					astBuilder lastMethod: message fifth.
 					astBuilder & message first name => message third 
-						@ [ self umlSPFor: message ]] ]]
+						@ [ self openSubDiagramFor: message ]] ]]
 		ifFalse: [ 
 			message fourth
 					ifFalse: [ astBuilder & 'O' -> message second name => message third. ]
@@ -186,7 +186,7 @@ MicroUMLSDForCode5 >> initialize [
 ]
 
 { #category : 'inline' }
-MicroUMLSDForCode5 >> umlSPFor: message [
+MicroUMLSDForCode5 >> openSubDiagramFor: message [
 
 	| idx cList subList |
 	idx := message fifth first.
