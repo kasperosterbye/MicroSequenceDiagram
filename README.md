@@ -3,7 +3,7 @@ Interactive UML sequence diagrams for Pharo. Generate diagrams from running code
 
 ```
 Metacello new
-    githubUser: 'kasperosterbye' project: 'MicroSequenceDiagram' commitish: 'main' path: 'src';
+    githubUser: 'kasperosterbye' project: 'MicroSequenceDiagram' commitish: 'dev' path: 'src';
     baseline: 'MicroSequenceDiagram';
     load.
 ```
