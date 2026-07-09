@@ -41,7 +41,7 @@ MicroUMLSDAstBuilder class >> example2 [
     , 'Login System' @ [ Transcript << 'Was here' << String lf ]
     , 'Database'
     & 'Playground' -> 'Login System' => 'call'
-	 & 'Login System' => 'self call'
+	 & 'Login System' => 'Joe call'
     & 'Login System' -> 'Database' => ('verify', String lf, 'Now') 
 			@ [  Transcript << 'Kilroy' << String lf  ]
     & 'Database' -> 'Playground' --> '')
