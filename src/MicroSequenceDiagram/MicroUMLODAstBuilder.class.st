@@ -20,7 +20,8 @@ MicroUMLODAstBuilder class >> example1 [
 	"Example demonstrating the creation and linking of UML elements"
 
 	(MicroUMLODAstBuilder
-    === 'Playground')
+    === 'Playground'
+	 === 'Joe')
 	renderDiagram.
 ]
 
@@ -45,7 +46,7 @@ MicroUMLODAstBuilder >> initialize [
 
 { #category : 'building' }
 MicroUMLODAstBuilder >> instancesAndRelations [
-	^ { instances value. relations }
+	^ { instances values. relations }
 ]
 
 { #category : 'building' }

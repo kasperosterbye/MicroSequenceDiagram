@@ -25,6 +25,7 @@ MicroUMLSequenceDiagram class >> from: ast [
 { #category : 'instance creation' }
 MicroUMLSequenceDiagram class >> fromActorsAndMessages: aAndM [
 	| instanse |
+
 	instanse := self new.
 	instanse actorsAndMessages: aAndM.
 	^ instanse
