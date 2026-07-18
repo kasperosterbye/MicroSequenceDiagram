@@ -30,7 +30,7 @@ MicroUMLODAstBuilder >> === aString [
 	"Adds a new actor to the sequence diagram if it doesn't already exist"
 	relations ifNotEmpty: [ ^ self error: 'No new usage of `===` after an `===>`' ].
 	(instances includesKey: aString) ifTrue: [ ^ self ].
-	instances add: aString -> (MicroUMLODInstance new
+	instances add: aString -> (MicroUMLODObject new
 			 name: aString).
 	"actorOrMessage := actors values at: actors size."
 	^ self

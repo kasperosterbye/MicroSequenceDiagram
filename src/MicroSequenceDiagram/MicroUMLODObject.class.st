@@ -1,5 +1,5 @@
 Class {
-	#name : 'MicroUMLODInstance',
+	#name : 'MicroUMLODObject',
 	#superclass : 'Object',
 	#instVars : [
 		'name',
@@ -12,7 +12,7 @@ Class {
 }
 
 { #category : 'examples' }
-MicroUMLODInstance class >> example01 [
+MicroUMLODObject class >> example01 [
 	| canvas |
 	canvas := RSCanvas new.
 	canvas add: (MicroUMLObjectDiagram new name: 'Object'; className: 'Class'; x: 100; y: 100; draw).
@@ -21,26 +21,26 @@ MicroUMLODInstance class >> example01 [
 ]
 
 { #category : 'accessing' }
-MicroUMLODInstance >> className [
+MicroUMLODObject >> className [
 	^ className
 ]
 
 { #category : 'accessing' }
-MicroUMLODInstance >> className: anObject [
+MicroUMLODObject >> className: anObject [
 	className := anObject
 ]
 
 { #category : 'initialization' }
-MicroUMLODInstance >> initialize [
+MicroUMLODObject >> initialize [
 
 ]
 
 { #category : 'accessing' }
-MicroUMLODInstance >> name [
+MicroUMLODObject >> name [
 	^ name
 ]
 
 { #category : 'accessing' }
-MicroUMLODInstance >> name: anObject [
+MicroUMLODObject >> name: anObject [
 	name := anObject
 ]
