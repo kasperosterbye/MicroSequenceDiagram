@@ -194,38 +194,6 @@ MMM class >> linkFromCells: cells cell: fromIx rowIndex: fromRow toCell: toIx [
         yourself
 ]
 
-{ #category : 'as yet unclassified' }
-MMM class >> old_linkFromCells: cells cell: fromIx rowIndex: fromRow toCell: toIx [
-	"Tegner en polylinje fra højre kant af cellen på fromIx (i række fromRow) 
-     over til højre kant af cellen på toIx (i titelrækken).
-     Række 0 = titel, 1 = første nøgle/værdi-række, osv."
-
-	| rowH fromCell toCell fromRect toRect x1 y1 x2 y2 xOut fromLeftward |
-	rowH := 22.
-	fromCell := cells at: fromIx.
-	toCell := cells at: toIx.
-	fromRect := fromCell encompassingRectangle.
-	toRect := toCell encompassingRectangle.
-	self halt.
-	fromLeftward := toRect left < fromRect left.
-	x1 := fromRect right.
-	y1 := fromRect top + (rowH * (fromRow + 0.5)).
-	x2 := toRect right.
-	y2 := toRect top + (rowH * 0.5). "titelrækken"
-	xOut := (x1 max: x2) + 40.
-	^ RSPolyline new
-		  controlPoints: {
-				  (x1 @ y1).
-				  (xOut @ y1).
-				  (xOut @ y2).
-				  (x2 @ y2) };
-		  color: Color black;
-		  markerEnd: (RSShapeFactory arrow
-				   size: 8;
-				   color: Color black) asMarker;
-		  yourself
-]
-
 { #category : 'examples' }
 MMM class >> rs2: id [
 
