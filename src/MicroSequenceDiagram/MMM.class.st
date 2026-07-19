@@ -109,8 +109,8 @@ MMM class >> example13 [
 		on: cells.
 	canvas add: (self
 			 linkFromCells: cells
-			 cell: 7 rowIndex: 2
-			 toCell: 3).
+			 cell: 3 rowIndex: 2
+			 toCell: 9).
 	canvas @ RSCanvasController.
 	canvas open
 ]
@@ -173,25 +173,27 @@ canvas open
 
 { #category : 'as yet unclassified' }
 MMM class >> linkFromCells: cells cell: fromIx rowIndex: fromRow toCell: toIx [
-    | rowH fromRect toRect x1 y1 x2 y2 xOut  |
-    rowH := 22.
-    fromRect := (cells at: fromIx) encompassingRectangle.
-    toRect   := (cells at: toIx)   encompassingRectangle.
- 
-	(toRect right < fromRect left)
-		ifTrue: [ x1 := fromRect left. x2 := toRect right ]
-		ifFalse: [ x1 := fromRect right. x2 := toRect left ].
-    
-    y1 := fromRect top + (rowH * (fromRow + 0.5)).
-    y2 := toRect   top + (rowH * 0.5).
 
-	 xOut := (x1 + x2) / 2.	
-    
-    ^ RSPolyline new
-        controlPoints: { x1 @ y1. xOut @ y1. xOut @ y2. x2 @ y2 };
-        color: Color black;
-        markerEnd: (RSShapeFactory arrow size: 8; color: Color black) asMarker;
-        yourself
+	| rowH gapSize fromRect toRect diff x1 y1 x2 y2 xOut |
+	rowH := 22.
+	gapSize := 50.
+	fromRect := (cells at: fromIx) encompassingRectangle.
+	toRect := (cells at: toIx) encompassingRectangle.
+	diff := (cells at: fromIx) matrix x - (cells at: toIx) matrix x.
+	diff negative ifTrue: [ x1 := fromRect right. x2 := toRect left ].
+	diff positive ifTrue: [ x1 := fromRect left. x2 := toRect right ].
+	diff isZero ifTrue: [ x1 := fromRect right. x2 := toRect right ].
+
+	y1 := fromRect top + (rowH * (fromRow + 0.5)).
+	y2 := toRect top + (rowH * 0.5).
+	xOut := diff <= 0 ifTrue: [ x1 + (gapSize/2) ] ifFalse: [ x1 - (gapSize/2) ].
+	^ RSBezier "RSPolyline" new
+		  controlPoints: { (x1 @ y1). (xOut @ y1). (xOut @ y2). (x2 @ y2) };
+		  color: Color black;
+		  markerEnd: (RSShapeFactory arrow
+				   size: 8;
+				   color: Color black) asMarker;
+		  yourself
 ]
 
 { #category : 'examples' }
