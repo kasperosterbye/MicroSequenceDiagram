@@ -11,13 +11,34 @@ Class {
 	#tag : 'MicroUmlObjectDiagram'
 }
 
-{ #category : 'examples' }
-MicroUMLODObject class >> example01 [
-	| canvas |
-	canvas := RSCanvas new.
-	canvas add: (MicroUMLObjectDiagram new name: 'Object'; className: 'Class'; x: 100; y: 100; draw).
-	canvas @ RSCanvasController.
-	canvas openWithTitle: 'Object Diagram' "classified: 'examples'"
+{ #category : 'as yet unclassified' }
+MicroUMLODObject class >> build3x3 [
+
+	| grid |
+	grid := OrderedCollection new.
+	grid addAll: ((1 to: 9) collect: [ :i |
+				 | label |
+				 label := i odd ifTrue: [
+						          ({ 3. 7 } includes: i)
+							          ifTrue: [ self new build1 ]
+							          ifFalse: [ self new build2 ] ].
+				 label ]).
+	^ grid
+]
+
+{ #category : 'as yet unclassified' }
+MicroUMLODObject >> build1 [
+
+	name := 'aCapitalCity'.
+	variables := #( #( 'UK' 'London' ) #( 'USA' 'Washington' ) #( 'Germany' 'Berlin' ) )
+]
+
+{ #category : 'as yet unclassified' }
+MicroUMLODObject >> build2 [
+
+	name := 'aCapitalCity'.
+	className := 'Exp'.
+	variables := #( #( 'UK' 'London' ) #( 'USA' 'Washington' ) )
 ]
 
 { #category : 'accessing' }
@@ -30,9 +51,19 @@ MicroUMLODObject >> className: anObject [
 	className := anObject
 ]
 
+{ #category : 'accessing' }
+MicroUMLODObject >> fullName [
+	^ className 
+		ifNotNil: [ name , ': ', className ] 
+		ifNil: [ name ]
+]
+
 { #category : 'initialization' }
 MicroUMLODObject >> initialize [
-
+	"#name . #className . #variables"
+	name := 'kilroy'.
+	className := nil.
+	variables := OrderedCollection new.
 ]
 
 { #category : 'accessing' }
@@ -43,4 +74,16 @@ MicroUMLODObject >> name [
 { #category : 'accessing' }
 MicroUMLODObject >> name: anObject [
 	name := anObject
+]
+
+{ #category : 'accessing' }
+MicroUMLODObject >> variables [
+
+	^ variables
+]
+
+{ #category : 'accessing' }
+MicroUMLODObject >> variables: anObject [
+
+	variables := anObject
 ]
