@@ -37,8 +37,8 @@ MicroUMLODObject >> build1 [
 MicroUMLODObject >> build2 [
 
 	name := 'aCapitalCity'.
-	className := 'Exp'.
-	variables := #( #( 'UK' 'London' ) #( 'USA' 'Washington' ) )
+	className := 'Experiment'.
+	variables := #( #( 'UK' '') #( 'USA' 'Washington' ) )
 ]
 
 { #category : 'accessing' }
@@ -56,6 +56,13 @@ MicroUMLODObject >> fullName [
 	^ className 
 		ifNotNil: [ name , ': ', className ] 
 		ifNil: [ name ]
+]
+
+{ #category : 'accessing' }
+MicroUMLODObject >> headerName [
+	^ className 
+		ifNotNil: [ {name . className} ] 
+		ifNil: [ {name . ' '} ]
 ]
 
 { #category : 'initialization' }
