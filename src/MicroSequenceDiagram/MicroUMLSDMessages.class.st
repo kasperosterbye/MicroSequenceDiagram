@@ -124,7 +124,9 @@ MicroUMLSDMessages >> draw [
 	"Draws a message line and label based on the message type and description"
 
 	| line label |
-	label := self drawLabel: description at: fromActor x + toActor x / 2 @ (y - 10).
+	"label := self drawLabel: description at: fromActor x + toActor x / 2 @ (y - 10)."
+	self halt.
+	label := self drawLabel: description at: (fromActor x min: toActor x) @ (y - 10).
 	clickAction ifNotNil: [
 			label first color: Color red.
 			label first italic.
@@ -255,6 +257,5 @@ MicroUMLSDMessages >> y [
 { #category : 'accessing' }
 MicroUMLSDMessages >> y: anObject [
 	"Sets the y-coordinate of the message in the sequence diagram"
-
 	y := anObject
 ]

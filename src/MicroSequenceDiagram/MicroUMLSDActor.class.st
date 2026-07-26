@@ -39,6 +39,7 @@ Class {
 	#superclass : 'Object',
 	#instVars : [
 		'name',
+		'lifeLineBoxes',
 		'clickAction',
 		'width',
 		'x',
@@ -113,6 +114,34 @@ MicroUMLSDActor >> index: anObject [
 	index := anObject
 ]
 
+{ #category : 'initialization' }
+MicroUMLSDActor >> initialize [ 
+	
+	lifeLineBoxes := OrderedCollection new.
+]
+
+{ #category : 'accessing' }
+MicroUMLSDActor >> lastLifeLineBox [
+	lifeLineBoxes ifEmpty: [ ^ 0 ].
+	^ lifeLineBoxes last value
+]
+
+{ #category : 'accessing' }
+MicroUMLSDActor >> lifeLineDownOn: messageId [
+
+	lifeLineBoxes add: (messageId -> (self lastLifeLineBox - 1))
+	
+
+]
+
+{ #category : 'accessing' }
+MicroUMLSDActor >> lifeLineUpOn: messageId [
+
+	lifeLineBoxes add: ( messageId -> (self lastLifeLineBox + 1))
+	
+
+]
+
 { #category : 'accessing' }
 MicroUMLSDActor >> name [
 	"Returns the name of the actor"
@@ -123,7 +152,6 @@ MicroUMLSDActor >> name [
 { #category : 'accessing' }
 MicroUMLSDActor >> name: anObject [
 	"Sets the name of the actor and calculates its width based on the label text"
-	self halt.
 	name := anObject
 ]
 

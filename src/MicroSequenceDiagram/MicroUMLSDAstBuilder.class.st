@@ -48,6 +48,68 @@ MicroUMLSDAstBuilder class >> example2 [
 	renderDiagram
 ]
 
+{ #category : 'examples' }
+MicroUMLSDAstBuilder class >> example30 [
+
+	(MicroUMLSDAstBuilder
+    , 'App'
+    , 'API'
+    , 'LLM'
+	 , 'Weather Tool'
+	
+    & 'App' -> 'API' => '1: send besked'
+	 "note right of API: chatHistory += msg(bruger)"
+	 & 'API' -> 'LLM' => '2: send historik'
+	 & 'LLM' -> 'API' => '3: tool_call(get_temp, "København")'
+	 & 'API' -> 'Weather Tool' => ':4: get_temp("København")'
+	 & 'Weather Tool' -> 'API' --> '5: 14°C'
+	 & 'API' -> 'LLM' => '6: tool_result(14°C)'
+	 & 'LLM' -> 'API' --> '7: answer user'
+	 "note right of API: chatHistory += msg(assistent)"
+	 & 'API' -> 'App' --> '8: show response')
+	renderDiagram
+]
+
+{ #category : 'examples' }
+MicroUMLSDAstBuilder class >> example35 [
+
+	| micro |
+	micro := (MicroUMLSDAstBuilder
+    , 'App'
+    , 'API'
+    , 'LLM'
+	 , 'Weather Tool'
+	
+    & 'App' ->+ 'API' => '1: send besked'
+	 "note right of API: chatHistory += msg(bruger)"
+	 & 'API' ->+ 'LLM' => '2: send historik'
+	 & 'LLM' ->+ 'API' => '3: tool_call(get_temp, "København")'
+	 & 'API' ->+ 'Weather Tool' => ':4: get_temp("København")'
+	 & 'Weather Tool' -> 'API' --> '5: 14°C'
+	 & 'API' -> 'LLM' --> '6: tool_result(14°C)'
+	 & 'LLM' -> 'API' --> '7: answer user'
+	 "note right of API: chatHistory += msg(assistent)"
+	 & 'API' -> 'App' --> '8: show response').
+	self halt.
+	micro renderDiagram
+]
+
+{ #category : 'examples' }
+MicroUMLSDAstBuilder class >> example5 [
+	"Example demonstrating the creation and linking of UML elements"
+
+	(MicroUMLSDAstBuilder
+    , 'A'
+    , 'Login System' @ [ Transcript << 'Was here' << String lf ]
+    , 'Database'
+    & 'A' -> 'Login System' => 'call'
+	 & 'Login System' => 'Joe call'
+    & 'Login System' -> 'Database' => ('verify', String lf, 'Now') 
+			@ [  Transcript << 'Kilroy' << String lf  ]
+    & 'Database' -> 'A' --> '')
+	renderDiagram
+]
+
 { #category : 'logical operations' }
 MicroUMLSDAstBuilder >> & from [
 	"Adds a new message to the sequence diagram, specifying the sender and receiver."
@@ -78,7 +140,9 @@ MicroUMLSDAstBuilder >> --> aString [
 	| message messageType |
 	message := messages last.
 	messageType := #return.
-	message toActor ifNil: [ message toActor: message fromActor].
+	message toActor 
+		ifNil: [ message toActor: message fromActor]
+		ifNotNil: [ message fromActor lifeLineDownOn: messages size.].
 	message
 			 description: aString;
 			 messageType: messageType;
@@ -89,8 +153,16 @@ MicroUMLSDAstBuilder >> --> aString [
 { #category : 'logical operations' }
 MicroUMLSDAstBuilder >> -> to [
 	"Adds a new message to the sequence diagram, specifying the sender and receiver"
-
     messages last toActor: (actors at: to) .
+    ^ self
+]
+
+{ #category : 'logical operations' }
+MicroUMLSDAstBuilder >> ->+ to [
+	 | toActor |
+	 toActor := (actors at: to).
+    messages last toActor: (actors at: to) .
+	 toActor lifeLineUpOn: messages size.
     ^ self
 ]
 
