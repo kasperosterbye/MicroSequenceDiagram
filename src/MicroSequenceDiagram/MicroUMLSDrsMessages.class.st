@@ -92,27 +92,27 @@ MicroUMLSDrsMessages class >> topMargin [
 { #category : 'accessing' }
 MicroUMLSDrsMessages >> clickAction [
 	"Returns the click action associated with the message"
-	^ clickAction
+	^ message clickAction
 ]
 
 { #category : 'accessing' }
 MicroUMLSDrsMessages >> clickAction: act [
 	"Sets the click action for the message, which is executed when the message is clicked."
-	clickAction := act
+	message clickAction: act
 ]
 
 { #category : 'accessing' }
 MicroUMLSDrsMessages >> description [
 	"Returns the description of the message"
 
-	^ description
+	^ message description
 ]
 
 { #category : 'accessing' }
 MicroUMLSDrsMessages >> description: anObject [
 	"Sets the description of the message"
 
-	description := anObject
+	message description: anObject
 ]
 
 { #category : 'drawing' }
@@ -120,21 +120,21 @@ MicroUMLSDrsMessages >> draw [
 	"Draws a message line and label based on the message type and description"
 
 	| line label |
-	label := self drawLabel: description at: fromActor x + toActor x / 2 @ (y - 10).
+	label := self drawLabel: message description at: message fromActor x + message toActor x / 2 @ (y - 10).
 	"label := self drawLabel: description at: (fromActor x min: toActor x) @ (y - 10)."
-	clickAction ifNotNil: [
+	message clickAction ifNotNil: [
 			label first color: Color red.
 			label first italic.
-			label first when: RSMouseClick do: [ :evt | clickAction value ] for: self ].
+			label first when: RSMouseClick do: [ :evt | message clickAction value ] for: self ].
 	line := RSPolyline new
 		        color: Color black;
 		        markerEnd: (RSShapeFactory arrow
 				         size: 10;
 				         color: Color black) asMarker;
 		        yourself.
-	messageType = #call ifTrue: [ self drawCall: line ].
-	messageType = #return ifTrue: [ self drawReturn: line ].
-	messageType = #internal ifTrue: [ self drawInternal: line ].
+	message messageType = #call ifTrue: [ self drawCall: line ].
+	message messageType = #return ifTrue: [ self drawReturn: line ].
+	message messageType = #internal ifTrue: [ self drawInternal: line ].
 
 	^ { line } , label
 ]
@@ -143,15 +143,15 @@ MicroUMLSDrsMessages >> draw [
 MicroUMLSDrsMessages >> drawCall: line [
 	"Draws a call message line with an arrowhead, adjusting the offset based on the positions of the sender and receiver actors."
     | offset |
-    offset := (fromActor x > toActor x) ifTrue: [ 5 ] ifFalse: [ -5 ].
-    line controlPoints: { fromActor x @ y. (toActor x + offset) @ y }
+    offset := (message fromActor x > message toActor x) ifTrue: [ 5 ] ifFalse: [ -5 ].
+    line controlPoints: { message fromActor x @ y. (message toActor x + offset) @ y }
 ]
 
 { #category : 'drawing' }
 MicroUMLSDrsMessages >> drawInternal: line [
 	"Draws an internal message line with a loopback shape, adjusting the offset based on the positions of the sender and receiver actors."
     | x |
-    x := fromActor x.
+    x := message fromActor x.
     line controlPoints: { 
         x @ y. 
         (x + 25) @ y. 
@@ -182,9 +182,9 @@ MicroUMLSDrsMessages >> drawLabel: aString at: aPoint [
 MicroUMLSDrsMessages >> drawReturn: line [
 	"Draws a return message line with a dashed line and arrowhead, adjusting the offset based on the positions of the sender and receiver actors"
     | offset |
-    offset := (fromActor x > toActor x) ifTrue: [ 5 ] ifFalse: [ -5 ].
+    offset := (message fromActor x > message toActor x) ifTrue: [ 5 ] ifFalse: [ -5 ].
     line 
-        controlPoints: { fromActor x @ y. (toActor x + offset) @ y };
+        controlPoints: { message fromActor x @ y. (message toActor x + offset) @ y };
         dashArray: #(5 5)
 ]
 
@@ -192,13 +192,13 @@ MicroUMLSDrsMessages >> drawReturn: line [
 MicroUMLSDrsMessages >> fromActor [
 	"Returns the actor from which the message is sent"
 
-	^ fromActor
+	^ message fromActor
 ]
 
 { #category : 'accessing' }
 MicroUMLSDrsMessages >> fromActor: anObject [
 	"Sets the actor from which the message is sent"
-	fromActor := anObject
+	message fromActor: anObject
 ]
 
 { #category : 'accessing' }
@@ -208,38 +208,50 @@ MicroUMLSDrsMessages >> lastMethod: meth [
 ]
 
 { #category : 'accessing' }
+MicroUMLSDrsMessages >> message [
+
+	^ message
+]
+
+{ #category : 'accessing' }
+MicroUMLSDrsMessages >> message: anObject [
+
+	message := anObject
+]
+
+{ #category : 'accessing' }
 MicroUMLSDrsMessages >> messageType [
 	"Returns the type of the message"
 
-	^ messageType
+	^ message messageType
 ]
 
 { #category : 'accessing' }
 MicroUMLSDrsMessages >> messageType: anObject [
 	"Sets the type of the message"
 
-	messageType := anObject
+	message messageType: anObject
 ]
 
 { #category : 'printing' }
 MicroUMLSDrsMessages >> printOn: stream [
 	"Prints the message in the format [sender -> receiver description (type)]"
-	stream << '[ ' << fromActor name << ' -> ' << toActor name << ' ' << description asString
-		<< ' (' << messageType asString << ') ]'
+	stream << '[ ' << message fromActor name << ' -> ' << message toActor name<< ' ' << message description asString
+		<< ' (' << message messageType asString << ') ]'
 ]
 
 { #category : 'accessing' }
 MicroUMLSDrsMessages >> toActor [
 	"Returns the actor to which the message is sent"
 
-	^ toActor
+	^ message toActor
 ]
 
 { #category : 'accessing' }
 MicroUMLSDrsMessages >> toActor: anObject [
 	"Sets the actor to which the message is sent"
 
-	toActor := anObject
+	message toActor: anObject
 ]
 
 { #category : 'accessing' }

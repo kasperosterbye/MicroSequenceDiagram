@@ -90,7 +90,6 @@ MicroUMLSDAstBuilder class >> example35 [
 	 & 'LLM' -> 'API' --> '7: answer user'
 	 "note right of API: chatHistory += msg(assistent)"
 	 & 'API' -> 'App' --> '8: show response').
-	self halt.
 	micro renderDiagram
 ]
 

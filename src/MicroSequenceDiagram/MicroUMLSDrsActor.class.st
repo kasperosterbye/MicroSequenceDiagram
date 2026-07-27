@@ -65,6 +65,18 @@ MicroUMLSDrsActor class >> boxPadding [
     ^ 10 
 ]
 
+{ #category : 'accessing' }
+MicroUMLSDrsActor >> actor [
+
+	^ actor
+]
+
+{ #category : 'accessing' }
+MicroUMLSDrsActor >> actor: anObject [
+
+	actor := anObject
+]
+
 { #category : 'drawing' }
 MicroUMLSDrsActor >> draw [
 	"Draws an actor element with a box and label, positioned at the specified x-coordinate"
