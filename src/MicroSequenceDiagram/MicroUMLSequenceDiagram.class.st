@@ -96,7 +96,6 @@ MicroUMLSequenceDiagram >> initialize [
 { #category : 'roassal' }
 MicroUMLSequenceDiagram >> lifelineHeight [
 	"Returns the total height of the lifeline based on the number of messages and fixed margins"
-	
     ^ MicroUMLSDMessages topMargin 
         + (messages size * MicroUMLSDMessages messageGap) 
         + MicroUMLSDMessages bottomMargin

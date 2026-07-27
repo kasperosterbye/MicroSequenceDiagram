@@ -153,7 +153,6 @@ MicroUMLSDMessages >> lifeLineDownOn: messageId [
 
 { #category : 'initialization' }
 MicroUMLSDMessages >> lifeLineUpOn: messageId [
-
 	lifeLineBoxes add: ( messageId -> (self lastLifeLineBox + 1))
 	
 

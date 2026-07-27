@@ -119,9 +119,12 @@ MicroUMLSDrsMessages >> description: anObject [
 MicroUMLSDrsMessages >> draw [
 	"Draws a message line and label based on the message type and description"
 
-	| line label |
-	label := self drawLabel: message description at: message fromActor x + message toActor x / 2 @ (y - 10).
-	"label := self drawLabel: description at: (fromActor x min: toActor x) @ (y - 10)."
+	| line label leftX |
+leftX := message fromActor x min: message toActor x.
+label := self
+    drawLabel: message description
+    at: leftX @ (y - 10).
+	"label := self drawLabel: message description at: message fromActor x + message toActor x / 2 @ (y - 10)."
 	message clickAction ifNotNil: [
 			label first color: Color red.
 			label first italic.
@@ -162,20 +165,21 @@ MicroUMLSDrsMessages >> drawInternal: line [
 
 { #category : 'drawing' }
 MicroUMLSDrsMessages >> drawLabel: aString at: aPoint [
-	"Draws a label at the given point splitting multiline text into separate positioned labels"
-    | lines lineHeight lineAll|
-    lines := aString lines.
-    lines size <= 1 
-		ifTrue: [
-        lineAll :=  {RSLabel new text: aString; translateTo: aPoint; yourself}  ]
-    	ifFalse: [
-    lineHeight := 18.
-    lineAll := lines collectWithIndex: [ :line :i |
-        RSLabel new
-            text: line;
-            translateTo: aPoint x @ (aPoint y + ((i - 1) * lineHeight));
-            yourself ]].
-	^ lineAll 
+	"Draws a label with all lines left-aligned at aPoint x"
+
+	| lines lineHeight |
+
+	lines := aString lines.
+	lineHeight := 18.
+
+	^ lines collectWithIndex: [ :line :i |
+		| label |
+		label := RSLabel new text: line.
+		label translateTo:
+			(aPoint x + (label textWidth / 2) + 10)
+			@
+			(aPoint y + ((i - 1) * lineHeight)).
+		label ]
 ]
 
 { #category : 'drawing' }
