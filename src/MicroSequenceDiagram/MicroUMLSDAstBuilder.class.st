@@ -142,7 +142,7 @@ MicroUMLSDAstBuilder >> --> aString [
 	messageType := #return.
 	message toActor 
 		ifNil: [ message toActor: message fromActor]
-		ifNotNil: [ message fromActor lifeLineDownOn: messages size.].
+		"ifNotNil: [ message fromActor lifeLineDownOn: messages size.]".
 	message
 			 description: aString;
 			 messageType: messageType;

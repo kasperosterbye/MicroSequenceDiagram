@@ -35,77 +35,149 @@ canvas open
 - **Builder Enhancement**: The class can be extended using different builder enhancers to support additional configurations and customisations.
 "
 Class {
-	#name : 'MicroUMLSDActor',
+	#name : 'MicroUMLSDActor_Original',
 	#superclass : 'Object',
 	#instVars : [
 		'name',
-		'index',
-		'clickAction'
+		'lifeLineBoxes',
+		'clickAction',
+		'width',
+		'x',
+		'index'
 	],
-	#category : 'MicroSequenceDiagram-MicroUML',
+	#category : 'MicroSequenceDiagram-MicroUML_ORG',
 	#package : 'MicroSequenceDiagram',
-	#tag : 'MicroUML'
+	#tag : 'MicroUML_ORG'
 }
 
 { #category : 'accessing' }
-MicroUMLSDActor class >> actorGap [
+MicroUMLSDActor_Original class >> actorGap [
 	"Returns the gap between actors in a sequence diagram"
     ^ 20 
 ]
 
 { #category : 'accessing' }
-MicroUMLSDActor class >> boxHeight [
+MicroUMLSDActor_Original class >> boxHeight [
 	"Returns the height of the box in a sequence diagram"
     ^ 40
 ]
 
 { #category : 'accessing' }
-MicroUMLSDActor class >> boxPadding [
+MicroUMLSDActor_Original class >> boxPadding [
 	"Returns the padding for the box in a sequence diagram"
     ^ 10 
 ]
 
 { #category : 'accessing' }
-MicroUMLSDActor >> clickAction [
+MicroUMLSDActor_Original >> clickAction [
 	"Returns the click action associated with the actor"
 	^ clickAction
 ]
 
 { #category : 'accessing' }
-MicroUMLSDActor >> clickAction: action [
+MicroUMLSDActor_Original >> clickAction: action [
 	"Sets the click action associated with the actor"
 	clickAction := action
 ]
 
+{ #category : 'drawing' }
+MicroUMLSDActor_Original >> draw [
+	"Draws an actor element with a box and label, positioned at the specified x-coordinate"
+	| actorElement box label |
+	box := RSBox new
+		       width: self width;
+		       height: self class boxHeight;
+		       color: Color veryLightGray;
+		       borderColor: Color veryDarkGray.
+	label := RSLabel new text: name.
+	clickAction ifNotNil: [
+		label color: Color red.
+		label italic.
+		label when: RSMouseClick do: [ :evt | clickAction value ] for: self ].
+	actorElement := RSComposite new.
+	actorElement shapes: { box. label }.
+	actorElement translateTo: x @ 0.
+	^ actorElement
+]
+
 { #category : 'accessing' }
-MicroUMLSDActor >> index [
+MicroUMLSDActor_Original >> index [
 	"Returns the index of the actor"
 
 	^ index
 ]
 
 { #category : 'accessing' }
-MicroUMLSDActor >> index: anObject [
+MicroUMLSDActor_Original >> index: anObject [
 	"Sets the index of the actor"
 
 	index := anObject
 ]
 
+{ #category : 'initialization' }
+MicroUMLSDActor_Original >> initialize [ 
+	
+	lifeLineBoxes := OrderedCollection new.
+]
+
 { #category : 'accessing' }
-MicroUMLSDActor >> name [
+MicroUMLSDActor_Original >> lastLifeLineBox [
+	lifeLineBoxes ifEmpty: [ ^ 0 ].
+	^ lifeLineBoxes last value
+]
+
+{ #category : 'accessing' }
+MicroUMLSDActor_Original >> lifeLineDownOn: messageId [
+
+	lifeLineBoxes add: (messageId -> (self lastLifeLineBox - 1))
+	
+
+]
+
+{ #category : 'accessing' }
+MicroUMLSDActor_Original >> lifeLineUpOn: messageId [
+
+	lifeLineBoxes add: ( messageId -> (self lastLifeLineBox + 1))
+	
+
+]
+
+{ #category : 'accessing' }
+MicroUMLSDActor_Original >> name [
 	"Returns the name of the actor"
 
 	^ name
 ]
 
 { #category : 'accessing' }
-MicroUMLSDActor >> name: anObject [
+MicroUMLSDActor_Original >> name: anObject [
 	"Sets the name of the actor and calculates its width based on the label text"
 	name := anObject
 ]
 
 { #category : 'printing' }
-MicroUMLSDActor >> printOn: stream [
+MicroUMLSDActor_Original >> printOn: stream [
 	"Prints the actor's name in the format 'Actor: name'"
 	stream << 'Actor: ' << name asString
+]
+
+{ #category : 'accessing' }
+MicroUMLSDActor_Original >> width [
+	"Sets the width of the actor and calculates it based on the label text"
+	width ifNil: [ width := (RSLabel new text: name) textWidth + (self class boxPadding * 2) ].
+	^ width
+]
+
+{ #category : 'accessing' }
+MicroUMLSDActor_Original >> x [
+	"Returns the x-coordinate of the actor"
+
+	^ x
+]
+
+{ #category : 'accessing' }
+MicroUMLSDActor_Original >> x: anObject [
+	"Sets the x-coordinate of the actor"
+
+	x := anObject
 ]

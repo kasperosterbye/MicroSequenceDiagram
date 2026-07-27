@@ -59,14 +59,12 @@ canvas open
 In this example, a click action is associated with the message. When the message is clicked, the action is executed, which in this case prints a message to the Transcript. This demonstrates how to handle user interactions with messages in a sequence diagram.
 "
 Class {
-	#name : 'MicroUMLSDMessages',
+	#name : 'MicroUMLSDrsMessages',
 	#superclass : 'Object',
 	#instVars : [
-		'fromActor',
-		'toActor',
-		'description',
-		'clickAction',
-		'messageType'
+		'message',
+		'y',
+		'lastMethod'
 	],
 	#category : 'MicroSequenceDiagram-MicroUML',
 	#package : 'MicroSequenceDiagram',
@@ -74,93 +72,185 @@ Class {
 }
 
 { #category : 'accessing' }
-MicroUMLSDMessages class >> bottomMargin [
+MicroUMLSDrsMessages class >> bottomMargin [
 	"Returns the bottom margin for the sequence diagram"
     ^ 15
 ]
 
 { #category : 'accessing' }
-MicroUMLSDMessages class >> messageGap [
+MicroUMLSDrsMessages class >> messageGap [
 	"Returns the gap between messages in the sequence diagram"
     ^ 40
 ]
 
 { #category : 'accessing' }
-MicroUMLSDMessages class >> topMargin [
+MicroUMLSDrsMessages class >> topMargin [
 	"Returns the top margin for the sequence diagram"
     ^ 15
 ]
 
 { #category : 'accessing' }
-MicroUMLSDMessages >> clickAction [
+MicroUMLSDrsMessages >> clickAction [
 	"Returns the click action associated with the message"
 	^ clickAction
 ]
 
 { #category : 'accessing' }
-MicroUMLSDMessages >> clickAction: act [
+MicroUMLSDrsMessages >> clickAction: act [
 	"Sets the click action for the message, which is executed when the message is clicked."
 	clickAction := act
 ]
 
 { #category : 'accessing' }
-MicroUMLSDMessages >> description [
+MicroUMLSDrsMessages >> description [
 	"Returns the description of the message"
 
 	^ description
 ]
 
 { #category : 'accessing' }
-MicroUMLSDMessages >> description: anObject [
+MicroUMLSDrsMessages >> description: anObject [
 	"Sets the description of the message"
 
 	description := anObject
 ]
 
+{ #category : 'drawing' }
+MicroUMLSDrsMessages >> draw [
+	"Draws a message line and label based on the message type and description"
+
+	| line label |
+	label := self drawLabel: description at: fromActor x + toActor x / 2 @ (y - 10).
+	"label := self drawLabel: description at: (fromActor x min: toActor x) @ (y - 10)."
+	clickAction ifNotNil: [
+			label first color: Color red.
+			label first italic.
+			label first when: RSMouseClick do: [ :evt | clickAction value ] for: self ].
+	line := RSPolyline new
+		        color: Color black;
+		        markerEnd: (RSShapeFactory arrow
+				         size: 10;
+				         color: Color black) asMarker;
+		        yourself.
+	messageType = #call ifTrue: [ self drawCall: line ].
+	messageType = #return ifTrue: [ self drawReturn: line ].
+	messageType = #internal ifTrue: [ self drawInternal: line ].
+
+	^ { line } , label
+]
+
+{ #category : 'drawing' }
+MicroUMLSDrsMessages >> drawCall: line [
+	"Draws a call message line with an arrowhead, adjusting the offset based on the positions of the sender and receiver actors."
+    | offset |
+    offset := (fromActor x > toActor x) ifTrue: [ 5 ] ifFalse: [ -5 ].
+    line controlPoints: { fromActor x @ y. (toActor x + offset) @ y }
+]
+
+{ #category : 'drawing' }
+MicroUMLSDrsMessages >> drawInternal: line [
+	"Draws an internal message line with a loopback shape, adjusting the offset based on the positions of the sender and receiver actors."
+    | x |
+    x := fromActor x.
+    line controlPoints: { 
+        x @ y. 
+        (x + 25) @ y. 
+        (x + 25) @ (y + 15). 
+        (x + 5) @ (y + 15) 
+    }
+]
+
+{ #category : 'drawing' }
+MicroUMLSDrsMessages >> drawLabel: aString at: aPoint [
+	"Draws a label at the given point splitting multiline text into separate positioned labels"
+    | lines lineHeight lineAll|
+    lines := aString lines.
+    lines size <= 1 
+		ifTrue: [
+        lineAll :=  {RSLabel new text: aString; translateTo: aPoint; yourself}  ]
+    	ifFalse: [
+    lineHeight := 18.
+    lineAll := lines collectWithIndex: [ :line :i |
+        RSLabel new
+            text: line;
+            translateTo: aPoint x @ (aPoint y + ((i - 1) * lineHeight));
+            yourself ]].
+	^ lineAll 
+]
+
+{ #category : 'drawing' }
+MicroUMLSDrsMessages >> drawReturn: line [
+	"Draws a return message line with a dashed line and arrowhead, adjusting the offset based on the positions of the sender and receiver actors"
+    | offset |
+    offset := (fromActor x > toActor x) ifTrue: [ 5 ] ifFalse: [ -5 ].
+    line 
+        controlPoints: { fromActor x @ y. (toActor x + offset) @ y };
+        dashArray: #(5 5)
+]
+
 { #category : 'accessing' }
-MicroUMLSDMessages >> fromActor [
+MicroUMLSDrsMessages >> fromActor [
 	"Returns the actor from which the message is sent"
 
 	^ fromActor
 ]
 
 { #category : 'accessing' }
-MicroUMLSDMessages >> fromActor: anObject [
+MicroUMLSDrsMessages >> fromActor: anObject [
 	"Sets the actor from which the message is sent"
 	fromActor := anObject
 ]
 
 { #category : 'accessing' }
-MicroUMLSDMessages >> messageType [
+MicroUMLSDrsMessages >> lastMethod: meth [
+	"Sets the last method associated with the message"
+	lastMethod := meth
+]
+
+{ #category : 'accessing' }
+MicroUMLSDrsMessages >> messageType [
 	"Returns the type of the message"
 
 	^ messageType
 ]
 
 { #category : 'accessing' }
-MicroUMLSDMessages >> messageType: anObject [
+MicroUMLSDrsMessages >> messageType: anObject [
 	"Sets the type of the message"
 
 	messageType := anObject
 ]
 
 { #category : 'printing' }
-MicroUMLSDMessages >> printOn: stream [
+MicroUMLSDrsMessages >> printOn: stream [
 	"Prints the message in the format [sender -> receiver description (type)]"
 	stream << '[ ' << fromActor name << ' -> ' << toActor name << ' ' << description asString
 		<< ' (' << messageType asString << ') ]'
 ]
 
 { #category : 'accessing' }
-MicroUMLSDMessages >> toActor [
+MicroUMLSDrsMessages >> toActor [
 	"Returns the actor to which the message is sent"
 
 	^ toActor
 ]
 
 { #category : 'accessing' }
-MicroUMLSDMessages >> toActor: anObject [
+MicroUMLSDrsMessages >> toActor: anObject [
 	"Sets the actor to which the message is sent"
 
 	toActor := anObject
+]
+
+{ #category : 'accessing' }
+MicroUMLSDrsMessages >> y [
+	"Returns the y-coordinate of the message"
+
+	^ y
+]
+
+{ #category : 'accessing' }
+MicroUMLSDrsMessages >> y: anObject [
+	"Sets the y-coordinate of the message in the sequence diagram"
+	y := anObject
 ]
