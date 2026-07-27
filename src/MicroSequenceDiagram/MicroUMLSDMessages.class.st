@@ -66,7 +66,8 @@ Class {
 		'toActor',
 		'description',
 		'clickAction',
-		'messageType'
+		'messageType',
+		'lifeLineBoxes'
 	],
 	#category : 'MicroSequenceDiagram-MicroUML',
 	#package : 'MicroSequenceDiagram',
@@ -128,6 +129,34 @@ MicroUMLSDMessages >> fromActor [
 MicroUMLSDMessages >> fromActor: anObject [
 	"Sets the actor from which the message is sent"
 	fromActor := anObject
+]
+
+{ #category : 'initialization' }
+MicroUMLSDMessages >> initialize [ 
+	
+	lifeLineBoxes := OrderedCollection new.
+]
+
+{ #category : 'initialization' }
+MicroUMLSDMessages >> lastLifeLineBox [
+	lifeLineBoxes ifEmpty: [ ^ 0 ].
+	^ lifeLineBoxes last value
+]
+
+{ #category : 'initialization' }
+MicroUMLSDMessages >> lifeLineDownOn: messageId [
+
+	lifeLineBoxes add: (messageId -> (self lastLifeLineBox - 1))
+	
+
+]
+
+{ #category : 'initialization' }
+MicroUMLSDMessages >> lifeLineUpOn: messageId [
+
+	lifeLineBoxes add: ( messageId -> (self lastLifeLineBox + 1))
+	
+
 ]
 
 { #category : 'accessing' }

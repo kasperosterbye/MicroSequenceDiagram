@@ -161,8 +161,9 @@ MicroUMLSDAstBuilder >> -> to [
 MicroUMLSDAstBuilder >> ->+ to [
 	 | toActor |
 	 toActor := (actors at: to).
-    messages last toActor: (actors at: to) .
-	 toActor lifeLineUpOn: messages size.
+    messages last 
+		toActor: (actors at: to);
+	 	lifeLineUpOn: messages size.
     ^ self
 ]
 
@@ -178,8 +179,8 @@ MicroUMLSDAstBuilder >> => aString [
 		messageType := #internal ].
    message
 			 description: aString;
-			 messageType: messageType ;
-			 lastMethod: lastMethod;
+			 messageType: messageType ";
+			 lastMethod: lastMethod";
 			 yourself.
     ^ self
 ]

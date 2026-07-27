@@ -39,7 +39,6 @@ Class {
 	#superclass : 'Object',
 	#instVars : [
 		'actor',
-		'lifeLineBoxes',
 		'width',
 		'x'
 	],
@@ -84,34 +83,6 @@ MicroUMLSDrsActor >> draw [
 	actorElement shapes: { box. label }.
 	actorElement translateTo: x @ 0.
 	^ actorElement
-]
-
-{ #category : 'initialization' }
-MicroUMLSDrsActor >> initialize [ 
-	
-	lifeLineBoxes := OrderedCollection new.
-]
-
-{ #category : 'accessing' }
-MicroUMLSDrsActor >> lastLifeLineBox [
-	lifeLineBoxes ifEmpty: [ ^ 0 ].
-	^ lifeLineBoxes last value
-]
-
-{ #category : 'accessing' }
-MicroUMLSDrsActor >> lifeLineDownOn: messageId [
-
-	lifeLineBoxes add: (messageId -> (self lastLifeLineBox - 1))
-	
-
-]
-
-{ #category : 'accessing' }
-MicroUMLSDrsActor >> lifeLineUpOn: messageId [
-
-	lifeLineBoxes add: ( messageId -> (self lastLifeLineBox + 1))
-	
-
 ]
 
 { #category : 'accessing' }
