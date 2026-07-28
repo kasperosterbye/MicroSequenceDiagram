@@ -71,14 +71,35 @@ MicroUMLSequenceDiagram >> drawActors [
 
 { #category : 'roassal' }
 MicroUMLSequenceDiagram >> drawLifeline: actor [
-	"Draws the lifelines for each actor on the canvas"
-    canvas add:
-        (RSLine new
-            startPoint: actor x @ (MicroUMLSDActor boxHeight / 2);
-            endPoint: actor x @ (MicroUMLSDActor boxHeight / 2 + self lifelineHeight);
-            dashArray: #(5 5);
-            color: Color black;
-            yourself )
+
+	| rectangle actorIndex messageIndex maxActivation|
+	canvas add: (RSLine new
+			 startPoint: actor x @ (MicroUMLSDActor boxHeight / 2);
+			 endPoint: actor x @ (MicroUMLSDActor boxHeight / 2 + self lifelineHeight);
+			 dashArray: #( 5 5 );
+			 color: Color black;
+			 yourself).
+	actorIndex := actor actor index.
+	messageIndex := messages size.
+	maxActivation := 0.
+	1 to: messageIndex do: [ :message |
+		(activationLevels at: { actorIndex. message }) > maxActivation 
+			ifTrue: [ maxActivation := activationLevels at: { actorIndex. message } ]
+		 ].
+	self halt.
+	1 to: maxActivation do: [ :activationLevel |
+		| start end |
+		start := end := 0.
+		
+		 ].
+	rectangle := RSBox new
+		             translateTo: actor x @ 100;
+		             width: 10;
+		             height: 100;
+		             color: Color white;
+		             borderColor: Color black;
+		             yourself.
+	canvas add: rectangle
 ]
 
 { #category : 'roassal' }
