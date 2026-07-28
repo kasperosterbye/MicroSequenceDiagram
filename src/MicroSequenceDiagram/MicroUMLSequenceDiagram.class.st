@@ -46,11 +46,13 @@ MicroUMLSequenceDiagram >> computeActorPositions [
 			b := actors at: index .
 
 			messagesBetween := messages select: [ :msg |
-				(msg fromActor = a and: [ msg toActor = b ]) or: [ msg fromActor = b and: [ msg toActor = a ] ] ].
+				(msg message fromActor = a and: [ msg message toActor = b ]) 
+					or: [ msg message fromActor = b and: [ msg message toActor = a ] ] ].
 			maxDistance := messagesBetween
 				 ifEmpty: [ actorGap ]
 				 ifNotEmpty: [ :msgs | 
-				 	(msgs collect: [ :msg | (RSLabel new text: msg description) textWidth ]) max + actorGap + 10].
+				 	(msgs collect: [ :msg | 
+						(RSLabel new text: msg message description) textWidth ]) max + actorGap + 10].
 			b x: a x + (maxDistance max: (a width / 2) + (b width / 2) + (2*actorGap) )   ].
 ]
 
@@ -83,7 +85,7 @@ MicroUMLSequenceDiagram >> drawLifelines [
 MicroUMLSequenceDiagram >> drawMessages [
 	"Draws all messages on the canvas"
     messages do: [ :msg | 
-		canvas addAll: msg draw ]
+		canvas addAll: (msg draw: activationLevels) ]
 ]
 
 { #category : 'initialization' }

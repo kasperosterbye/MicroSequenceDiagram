@@ -85,7 +85,7 @@ MicroUMLSDAstBuilder class >> example35 [
 	 & 'API' ->+ 'LLM' => '2: send historik'
 	 & 'LLM' ->+ 'API' => '3: tool_call(get_temp, "København")'
 	 "external call"
-	 & 'API' ->+ 'Weather Tool' => ':4: get_temp("København")'
+	 & 'API' ->+ 'Weather Tool' => '4: get_temp("København")'
 	 & 'Weather Tool' -> 'API' --> '5: 14°C'
 	 & 'API' -> 'LLM' --> '6: tool_result(14°C)'
 	 & 'LLM' -> 'API' --> '7: answer user'
