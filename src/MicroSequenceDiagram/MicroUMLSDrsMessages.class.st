@@ -95,6 +95,7 @@ MicroUMLSDrsMessages >> draw [
 	"Draws a message line and label based on the message type and description"
 
 	| line label leftX |
+self halt.
 	leftX := message fromActor x min: message toActor x.
 	label := self
    		drawLabel: message description
@@ -150,21 +151,22 @@ MicroUMLSDrsMessages >> draw: activationLevels [
 MicroUMLSDrsMessages >> drawCall: line [
 	"Draws a call message line with an arrowhead, adjusting the offset based on the positions of the sender and receiver actors."
     | offset |
-
+self halt.
     offset := (message fromActor x > message toActor x) ifTrue: [ 5 ] ifFalse: [ -5 ].
     line controlPoints: { message fromActor x @ y . (message toActor x + offset)  @ y }
 ]
 
 { #category : 'drawing' }
 MicroUMLSDrsMessages >> drawCall: line from: a to: b [
-	"Draws a call message line with an arrowhead, adjusting the offset based on the positions of the sender and receiver actors."
-    (message fromActor x > message toActor x) "ifTrue: [ 5 ] ifFalse: [ -5 ]"
+	| leftToRight |
+	leftToRight := (message fromActor x <= message toActor x). "ifTrue: [ 5 ] ifFalse: [ -5 ]"
+	leftToRight 
 		ifTrue: [ line controlPoints: 
 			{ message fromActor x + (a*15) @ y . 
-			(message toActor x +  (b*15))  @ y } ]
+			( message toActor x - (b*15) - 5 )  @ y } ]
 		ifFalse: [ line controlPoints: 
 			{ message fromActor x + (a*15) @ y . 
-			( message toActor x - (b*15))  @ y } ].
+			(message toActor x + (b*15) + 5)  @ y } ]
     
 ]
 
@@ -204,6 +206,7 @@ MicroUMLSDrsMessages >> drawLabel: aString at: aPoint [
 MicroUMLSDrsMessages >> drawReturn: line [
 	"Draws a return message line with a dashed line and arrowhead, adjusting the offset based on the positions of the sender and receiver actors"
     | offset |
+self halt.
     offset := (message fromActor x > message toActor x) ifTrue: [ 5 ] ifFalse: [ -5 ].
     line 
         controlPoints: { message fromActor x @ y. (message toActor x + offset) @ y };
@@ -212,14 +215,15 @@ MicroUMLSDrsMessages >> drawReturn: line [
 
 { #category : 'drawing' }
 MicroUMLSDrsMessages >> drawReturn: line from: a to: b [
-	"Draws a return message line with a dashed line and arrowhead, adjusting the offset based on the positions of the sender and receiver actors"
-    (message fromActor x > message toActor x) "ifTrue: [ 5 ] ifFalse: [ -5 ]"
-	 	ifTrue: [ line controlPoints: 
-			{ message fromActor x - (a*15) @ y . 
-			(message toActor x +  (b*15))  @ y } ]
-	   ifFalse: [ line controlPoints: 
+	| leftToRight |
+	leftToRight := (message fromActor x <= message toActor x). "ifTrue: [ 5 ] ifFalse: [ -5 ]"
+	leftToRight 
+	   ifTrue: [ line controlPoints: 
 			{ message fromActor x + (a*15) @ y . 
-			( message toActor x - (b*15))  @ y }   ].
+			( message toActor x - (b*15) - 5 )  @ y }   ]
+		ifFalse: [ line controlPoints: 
+			{ message fromActor x - (a*15) @ y . 
+			(message toActor x +  (b*15) + 5)  @ y } ].
     line dashArray: #(5 5)
 ]
 

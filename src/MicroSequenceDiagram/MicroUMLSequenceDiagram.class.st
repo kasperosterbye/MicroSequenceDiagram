@@ -70,15 +70,21 @@ MicroUMLSequenceDiagram >> drawActors [
 ]
 
 { #category : 'roassal' }
-MicroUMLSequenceDiagram >> drawLifelines [
+MicroUMLSequenceDiagram >> drawLifeline: actor [
 	"Draws the lifelines for each actor on the canvas"
-    canvas addAll: (actors collect: [ :actor |
-        RSLine new
+    canvas add:
+        (RSLine new
             startPoint: actor x @ (MicroUMLSDActor boxHeight / 2);
             endPoint: actor x @ (MicroUMLSDActor boxHeight / 2 + self lifelineHeight);
             dashArray: #(5 5);
             color: Color black;
-            yourself ])
+            yourself )
+]
+
+{ #category : 'roassal' }
+MicroUMLSequenceDiagram >> drawLifelines [
+	"Draws the lifelines for each actor on the canvas"
+    actors do: [ :actor | self drawLifeline: actor ]
 ]
 
 { #category : 'roassal' }
