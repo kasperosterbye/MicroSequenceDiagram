@@ -65,9 +65,10 @@ Class {
 		'fromActor',
 		'toActor',
 		'description',
+		'index',
 		'clickAction',
 		'messageType',
-		'lifeLineBoxes'
+		'activation'
 	],
 	#category : 'MicroSequenceDiagram-MicroUML',
 	#package : 'MicroSequenceDiagram',
@@ -90,6 +91,16 @@ MicroUMLSDMessages class >> messageGap [
 MicroUMLSDMessages class >> topMargin [
 	"Returns the top margin for the sequence diagram"
     ^ 15
+]
+
+{ #category : 'accessing' }
+MicroUMLSDMessages >> activation [
+	^ activation 
+]
+
+{ #category : 'accessing' }
+MicroUMLSDMessages >> activationNesting [
+	activation := true.
 ]
 
 { #category : 'accessing' }
@@ -131,31 +142,22 @@ MicroUMLSDMessages >> fromActor: anObject [
 	fromActor := anObject
 ]
 
+{ #category : 'accessing' }
+MicroUMLSDMessages >> index [
+
+	^ index
+]
+
+{ #category : 'accessing' }
+MicroUMLSDMessages >> index: anObject [
+
+	index := anObject
+]
+
 { #category : 'initialization' }
 MicroUMLSDMessages >> initialize [ 
 	
-	lifeLineBoxes := OrderedCollection new.
-]
-
-{ #category : 'initialization' }
-MicroUMLSDMessages >> lastLifeLineBox [
-	lifeLineBoxes ifEmpty: [ ^ 0 ].
-	^ lifeLineBoxes last value
-]
-
-{ #category : 'initialization' }
-MicroUMLSDMessages >> lifeLineDownOn: messageId [
-
-	lifeLineBoxes add: (messageId -> (self lastLifeLineBox - 1))
-	
-
-]
-
-{ #category : 'initialization' }
-MicroUMLSDMessages >> lifeLineUpOn: messageId [
-	lifeLineBoxes add: ( messageId -> (self lastLifeLineBox + 1))
-	
-
+	activation := false.
 ]
 
 { #category : 'accessing' }

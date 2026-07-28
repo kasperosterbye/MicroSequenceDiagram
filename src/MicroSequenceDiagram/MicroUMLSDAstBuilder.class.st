@@ -84,6 +84,7 @@ MicroUMLSDAstBuilder class >> example35 [
 	 "note right of API: chatHistory += msg(bruger)"
 	 & 'API' ->+ 'LLM' => '2: send historik'
 	 & 'LLM' ->+ 'API' => '3: tool_call(get_temp, "København")'
+	 "external call"
 	 & 'API' ->+ 'Weather Tool' => ':4: get_temp("København")'
 	 & 'Weather Tool' -> 'API' --> '5: 14°C'
 	 & 'API' -> 'LLM' --> '6: tool_result(14°C)'
@@ -114,7 +115,8 @@ MicroUMLSDAstBuilder >> & from [
 	"Adds a new message to the sequence diagram, specifying the sender and receiver."
 	messages add: (MicroUMLSDMessages new
 		fromActor: (actors at: from);
-		toActor: nil).
+		toActor: nil;
+		index: messages size + 1).
 	actorOrMessage := messages last.
 	^ self
 ]
@@ -142,10 +144,10 @@ MicroUMLSDAstBuilder >> --> aString [
 	message toActor 
 		ifNil: [ message toActor: message fromActor]
 		"ifNotNil: [ message fromActor lifeLineDownOn: messages size.]".
+	message activationNesting.
 	message
 			 description: aString;
-			 messageType: messageType;
-			 yourself.
+			 messageType: messageType.
 	^ self
 ]
 
@@ -162,7 +164,7 @@ MicroUMLSDAstBuilder >> ->+ to [
 	 toActor := (actors at: to).
     messages last 
 		toActor: (actors at: to);
-	 	lifeLineUpOn: messages size.
+	 	activationNesting.
     ^ self
 ]
 

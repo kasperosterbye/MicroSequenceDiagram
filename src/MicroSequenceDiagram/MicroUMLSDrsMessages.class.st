@@ -89,42 +89,15 @@ MicroUMLSDrsMessages class >> topMargin [
     ^ 15
 ]
 
-{ #category : 'accessing' }
-MicroUMLSDrsMessages >> clickAction [
-	"Returns the click action associated with the message"
-	^ message clickAction
-]
-
-{ #category : 'accessing' }
-MicroUMLSDrsMessages >> clickAction: act [
-	"Sets the click action for the message, which is executed when the message is clicked."
-	message clickAction: act
-]
-
-{ #category : 'accessing' }
-MicroUMLSDrsMessages >> description [
-	"Returns the description of the message"
-
-	^ message description
-]
-
-{ #category : 'accessing' }
-MicroUMLSDrsMessages >> description: anObject [
-	"Sets the description of the message"
-
-	message description: anObject
-]
-
 { #category : 'drawing' }
 MicroUMLSDrsMessages >> draw [
 	"Draws a message line and label based on the message type and description"
 
 	| line label leftX |
-leftX := message fromActor x min: message toActor x.
-label := self
-    drawLabel: message description
-    at: leftX @ (y - 10).
-	"label := self drawLabel: message description at: message fromActor x + message toActor x / 2 @ (y - 10)."
+	leftX := message fromActor x min: message toActor x.
+	label := self
+   		drawLabel: message description
+   		at: leftX @ (y - 10).
 	message clickAction ifNotNil: [
 			label first color: Color red.
 			label first italic.
@@ -147,7 +120,7 @@ MicroUMLSDrsMessages >> drawCall: line [
 	"Draws a call message line with an arrowhead, adjusting the offset based on the positions of the sender and receiver actors."
     | offset |
     offset := (message fromActor x > message toActor x) ifTrue: [ 5 ] ifFalse: [ -5 ].
-    line controlPoints: { message fromActor x @ y. (message toActor x + offset) @ y }
+    line controlPoints: { message fromActor x @ y . (message toActor x + offset) @ y }
 ]
 
 { #category : 'drawing' }
@@ -192,17 +165,9 @@ MicroUMLSDrsMessages >> drawReturn: line [
         dashArray: #(5 5)
 ]
 
-{ #category : 'accessing' }
-MicroUMLSDrsMessages >> fromActor [
-	"Returns the actor from which the message is sent"
-
-	^ message fromActor
-]
-
-{ #category : 'accessing' }
-MicroUMLSDrsMessages >> fromActor: anObject [
-	"Sets the actor from which the message is sent"
-	message fromActor: anObject
+{ #category : 'initialization' }
+MicroUMLSDrsMessages >> initialize [ 
+	super initialize.
 ]
 
 { #category : 'accessing' }
@@ -223,39 +188,11 @@ MicroUMLSDrsMessages >> message: anObject [
 	message := anObject
 ]
 
-{ #category : 'accessing' }
-MicroUMLSDrsMessages >> messageType [
-	"Returns the type of the message"
-
-	^ message messageType
-]
-
-{ #category : 'accessing' }
-MicroUMLSDrsMessages >> messageType: anObject [
-	"Sets the type of the message"
-
-	message messageType: anObject
-]
-
 { #category : 'printing' }
 MicroUMLSDrsMessages >> printOn: stream [
 	"Prints the message in the format [sender -> receiver description (type)]"
 	stream << '[ ' << message fromActor name << ' -> ' << message toActor name<< ' ' << message description asString
 		<< ' (' << message messageType asString << ') ]'
-]
-
-{ #category : 'accessing' }
-MicroUMLSDrsMessages >> toActor [
-	"Returns the actor to which the message is sent"
-
-	^ message toActor
-]
-
-{ #category : 'accessing' }
-MicroUMLSDrsMessages >> toActor: anObject [
-	"Sets the actor to which the message is sent"
-
-	message toActor: anObject
 ]
 
 { #category : 'accessing' }

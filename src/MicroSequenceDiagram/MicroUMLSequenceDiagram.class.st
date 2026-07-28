@@ -4,6 +4,7 @@ Class {
 	#instVars : [
 		'actors',
 		'messages',
+		'activationLevels',
 		'canvas',
 		'uiTitle'
 	],
@@ -81,7 +82,8 @@ MicroUMLSequenceDiagram >> drawLifelines [
 { #category : 'roassal' }
 MicroUMLSequenceDiagram >> drawMessages [
 	"Draws all messages on the canvas"
-    messages do: [ :msg | canvas addAll: msg draw ]
+    messages do: [ :msg | 
+		canvas addAll: msg draw ]
 ]
 
 { #category : 'initialization' }
@@ -104,16 +106,95 @@ MicroUMLSequenceDiagram >> lifelineHeight [
 { #category : 'roassal' }
 MicroUMLSequenceDiagram >> renderDiagram [
 	"Constructs and displays the sequence diagram on a canvas"
-
+	
+	self setActivationLevels.
 	canvas := RSCanvas new.
 	self 
 		computeActorPositions;
 		computeMessagePositions;
 		drawActors;
-		drawLifelines;
-		drawMessages.
+		drawMessages;
+		drawLifelines.
 	canvas @ RSCanvasController.
 	canvas openWithTitle: uiTitle
+]
+
+{ #category : 'initialization' }
+MicroUMLSequenceDiagram >> setActivationLevels [
+
+	activationLevels := OrderedDictionary new.
+	actors do: [ :act | messages do: [ :msg | 
+			activationLevels at: {act actor index. msg message index} put: 0 ] ].
+	1 to: messages size do: [ :msgIndex |
+			| msg from to prev |
+			msg := messages at: msgIndex.
+			from := msg message fromActor actor index.
+			to := msg message toActor actor index.
+			msg message activation ifTrue: [
+				msg message messageType = #call ifTrue: 
+					[  prev := msgIndex = 1
+							ifTrue: [ 0 ]
+							ifFalse: [ activationLevels at: {to . msgIndex - 1} ].
+						msgIndex to: messages size do: [ :idxCall |
+								activationLevels at: {to . idxCall} put: prev + 1
+				 		] ].
+				msg message messageType = #return ifTrue: 
+					[ prev := msgIndex = 1
+							ifTrue: [ 0 ]
+							ifFalse: [ activationLevels at: {from . msgIndex - 1} ].
+							msgIndex + 1 to: messages size do: [ :idxReturn |
+								activationLevels at: {from . idxReturn} put: prev - 1
+				 ] ] ].
+			 ]
+]
+
+{ #category : 'initialization' }
+MicroUMLSequenceDiagram >> setActivationLevels_old [
+
+	activationLevels := OrderedDictionary new.
+	actors do: [ :act | messages do: [ :msg | 
+			activationLevels at: {act actor index. msg message index} put: 0 ] ].
+	1 to: messages size do: [ :msgIndex |
+			| msg from to prev |
+			msg := messages at: msgIndex.
+			from := msg fromActor.
+			to := msg toActor.
+			prev := msgIndex = 1
+				        ifTrue: [ 0 ]
+				        ifFalse: [ activationLevels at: to at: (messages at: msgIndex - 1) ].
+			activationLevels at: to at: msg put: prev.
+			msg message activation
+				ifTrue: [
+						msg messageType = #call ifTrue: [ activationLevels at: to at: msg put: prev + 1 ].
+						msg messageType = #return ifTrue: [ activationLevels at: to at: msg put: prev - 1 ] ]
+				ifFalse: [  ] ].
+]
+
+{ #category : 'initialization' }
+MicroUMLSequenceDiagram >> setActivationLevels_old2 [
+
+	activationLevels := OrderedDictionary new.
+	actors do: [ :act | messages do: [ :msg | 
+			activationLevels at: {act actor index. msg message index} put: 0 ] ].
+	1 to: messages size do: [ :msgIndex |
+			| msg from to prev next |
+			msg := messages at: msgIndex.
+			from := msg message fromActor actor index.
+			to := msg message toActor actor index.
+			prev := msgIndex = 1
+				        ifTrue: [ 0 ]
+				        ifFalse: [ activationLevels at: {to . msgIndex - 1} ].
+			next := prev.
+			msg message activation
+				ifTrue: [
+						msg message messageType = #call ifTrue: 
+							[ next := prev + 1 ].
+						msg message messageType = #return ifTrue: 
+							[ next :=  prev - 1 ] ]
+				ifFalse: [  ].
+			msgIndex to: messages size do: [ :idx |
+				activationLevels at: {to . idx} put: next
+				 ] ].
 ]
 
 { #category : 'accessing' }

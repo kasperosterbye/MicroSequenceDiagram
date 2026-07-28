@@ -87,7 +87,6 @@ MicroUMLSDActor >> index [
 { #category : 'accessing' }
 MicroUMLSDActor >> index: anObject [
 	"Sets the index of the actor"
-
 	index := anObject
 ]
 
