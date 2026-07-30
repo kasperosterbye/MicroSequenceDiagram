@@ -119,30 +119,80 @@ self halt.
 
 { #category : 'drawing' }
 MicroUMLSDrsMessages >> draw: activationLevels [
-	"Draws a message line and label based on the message type and description"
 
-	| line label leftX rightX am1 am2 |
-	activations := activationLevels.
-	am1 := activations at: { message fromActor actor index. message index }.
-	am2 := activations at: { message toActor actor index. message index }.
-	leftX := message fromActor x min: message toActor x.
-	rightX :=  message fromActor x max: message toActor x.
+	| line label direction activationWidth levelOffset
+	  fromCenterX toCenterX startX endX labelX fromLevel toLevel |
+
+	activationWidth := 10.
+	levelOffset := activationWidth / 2.
+
+	fromLevel := activationLevels at: {
+		message fromActor actor index.
+		message index }.
+
+	toLevel := activationLevels at: {
+		message toActor actor index.
+		message index }.
+
+	direction := message toActor x > message fromActor x
+		ifTrue: [ 1 ]
+		ifFalse: [ -1 ].
+
+	fromCenterX := fromLevel = 0
+		ifTrue: [ message fromActor x ]
+		ifFalse: [
+			message fromActor x
+				+ ((fromLevel - 1) * levelOffset) ].
+
+	toCenterX := toLevel = 0
+		ifTrue: [ message toActor x ]
+		ifFalse: [
+			message toActor x
+				+ ((toLevel - 1) * levelOffset) ].
+
+	startX := fromLevel = 0
+		ifTrue: [ fromCenterX ]
+		ifFalse: [
+			fromCenterX + (direction * activationWidth / 2) ].
+
+	endX := toLevel = 0
+		ifTrue: [ toCenterX ]
+		ifFalse: [
+			toCenterX - (direction * activationWidth / 2) ].
+	message messageType = #return ifTrue: [
+		endX := endX - (direction * 5) ].
+
+	labelX := (startX min: endX) + 5.
+
 	label := self
-   		drawLabel: message description
-   		at: leftX + ( am1 * 5 ) @ (y - 10).
+		drawLabel: message description
+		at: labelX @ (y - 10).
+
 	message clickAction ifNotNil: [
-			label first color: Color red.
-			label first italic.
-			label first when: RSMouseClick do: [ :evt | message clickAction value ] for: self ].
+		label first
+			color: Color red;
+			italic;
+			when: RSMouseClick
+			do: [ :event | message clickAction value ]
+			for: self ].
+
 	line := RSPolyline new
-		        color: Color black;
-		        markerEnd: (RSShapeFactory arrow
-				         size: 10;
-				         color: Color black) asMarker;
-		        yourself.
-	message messageType = #call ifTrue: [ self drawCall: line from: am1 to: am2 ].
-	message messageType = #return ifTrue: [ self drawReturn: line from: am1 to: am2 ].
-	message messageType = #internal ifTrue: [ self drawInternal: line ].
+		color: Color black;
+		markerEnd: (RSShapeFactory arrow
+			size: 10;
+			color: Color black) asMarker;
+		yourself.
+
+	message messageType = #internal
+		ifTrue: [
+			self drawInternal: line ]
+		ifFalse: [
+			line controlPoints: {
+				startX @ y.
+				endX @ y }.
+
+			message messageType = #return ifTrue: [
+				line dashArray: #(5 5) ] ].
 
 	^ { line } , label
 ]
@@ -225,6 +275,36 @@ MicroUMLSDrsMessages >> drawReturn: line from: a to: b [
 			{ message fromActor x - (a*15) @ y . 
 			(message toActor x +  (b*15) + 5)  @ y } ].
     line dashArray: #(5 5)
+]
+
+{ #category : 'drawing' }
+MicroUMLSDrsMessages >> draw_old: activationLevels [
+	"Draws a message line and label based on the message type and description"
+
+	| line label leftX rightX am1 am2 |
+	activations := activationLevels.
+	am1 := activations at: { message fromActor actor index. message index }.
+	am2 := activations at: { message toActor actor index. message index }.
+	leftX := message fromActor x min: message toActor x.
+	rightX :=  message fromActor x max: message toActor x.
+	label := self
+   		drawLabel: message description
+   		at: leftX + ( am1 * 5 ) @ (y - 10).
+	message clickAction ifNotNil: [
+			label first color: Color red.
+			label first italic.
+			label first when: RSMouseClick do: [ :evt | message clickAction value ] for: self ].
+	line := RSPolyline new
+		        color: Color black;
+		        markerEnd: (RSShapeFactory arrow
+				         size: 10;
+				         color: Color black) asMarker;
+		        yourself.
+	message messageType = #call ifTrue: [ self drawCall: line from: am1 to: am2 ].
+	message messageType = #return ifTrue: [ self drawReturn: line from: am1 to: am2 ].
+	message messageType = #internal ifTrue: [ self drawInternal: line ].
+
+	^ { line } , label
 ]
 
 { #category : 'initialization' }

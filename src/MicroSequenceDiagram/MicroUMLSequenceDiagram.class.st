@@ -28,6 +28,13 @@ MicroUMLSequenceDiagram class >> fromActorsAndMessages: aAndM [
 ]
 
 { #category : 'as yet unclassified' }
+MicroUMLSequenceDiagram >> activationCenterXFor: actor level: level [
+
+	level = 0 ifTrue: [ ^ actor x ].
+	^ actor x + ((level - 1) * 5)
+]
+
+{ #category : 'as yet unclassified' }
 MicroUMLSequenceDiagram >> activationIntervalsFor: levels [
 
 	| result maxLevel |
@@ -106,6 +113,17 @@ MicroUMLSequenceDiagram >> drawActors [
 { #category : 'roassal' }
 MicroUMLSequenceDiagram >> drawLifeline: actor [
 
+	canvas add: (RSLine new
+			 startPoint: actor x @ (MicroUMLSDActor boxHeight / 2);
+			 endPoint: actor x @ (MicroUMLSDActor boxHeight / 2 + self lifelineHeight);
+			 dashArray: #( 5 5 );
+			 color: Color black;
+			 yourself).
+]
+
+{ #category : 'roassal' }
+MicroUMLSequenceDiagram >> drawLifeline_old: actor [
+
 	| rectangle actorIndex messageIndex maxActivation|
 	canvas add: (RSLine new
 			 startPoint: actor x @ (MicroUMLSDActor boxHeight / 2);
@@ -139,7 +157,42 @@ MicroUMLSequenceDiagram >> drawLifeline: actor [
 { #category : 'roassal' }
 MicroUMLSequenceDiagram >> drawLifelines [
 	"Draws the lifelines for each actor on the canvas"
-    actors do: [ :actor | self drawLifeline: actor ]
+    actors do: [ :actor | 
+		self drawLifeline: actor.
+		self drawLineActivations: actor ]
+]
+
+{ #category : 'roassal' }
+MicroUMLSequenceDiagram >> drawLineActivations: actor [
+
+	| activations activationWidth levelOffset |
+
+	activationWidth := 10.
+	levelOffset := activationWidth / 2.
+	activations := self lifelineList: actor.
+
+	activations do: [ :activation |
+		| level interval startY endY height rectangle |
+
+		level := activation first.
+		interval := activation second.
+
+		startY := (messages at: interval first) y.
+		endY := (messages at: interval second) y.
+		height := endY - startY.
+
+		rectangle := RSBox new
+			width: activationWidth;
+			height: height;
+			color: Color white;
+			borderColor: Color black;
+			translateTo:
+				(actor x + ((level - 1) * levelOffset))
+				@
+				(startY + (height / 2));
+			yourself.
+
+		canvas add: rectangle ]
 ]
 
 { #category : 'roassal' }
@@ -175,8 +228,9 @@ MicroUMLSequenceDiagram >> lifelineList: actor [
 		boxSizes add: (activationLevels at: {actorIndex . messageIndex })
 		 ].
 	result := self activationIntervalsFor: boxSizes asArray.
+	^ result.
 	
-	self halt.
+	
 ]
 
 { #category : 'roassal' }
@@ -189,8 +243,8 @@ MicroUMLSequenceDiagram >> renderDiagram [
 		computeActorPositions;
 		computeMessagePositions;
 		drawActors;
-		drawMessages;
-		drawLifelines.
+		drawLifelines;
+		drawMessages.
 	canvas @ RSCanvasController.
 	canvas openWithTitle: uiTitle
 ]

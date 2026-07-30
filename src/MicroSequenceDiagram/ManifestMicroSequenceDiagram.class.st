@@ -86,6 +86,13 @@ ManifestMicroSequenceDiagram class >> ruleLongMethodsRuleV1FalsePositive [
 ]
 
 { #category : 'code-critics' }
+ManifestMicroSequenceDiagram class >> ruleReCyclomaticComplexityRuleV1FalsePositive [
+
+	<ignoreForCoverage>
+	^ #(#(#(#RGPackageDefinition #(#MicroSequenceDiagram)) #'2026-07-30T08:57:19.832849+02:00') )
+]
+
+{ #category : 'code-critics' }
 ManifestMicroSequenceDiagram class >> ruleRefersToClassRuleV1FalsePositive [
 
 	<ignoreForCoverage>
