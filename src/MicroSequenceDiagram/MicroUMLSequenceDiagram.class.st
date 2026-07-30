@@ -27,6 +27,40 @@ MicroUMLSequenceDiagram class >> fromActorsAndMessages: aAndM [
 	^ instanse
 ]
 
+{ #category : 'as yet unclassified' }
+MicroUMLSequenceDiagram >> activationIntervalsFor: levels [
+
+	| result maxLevel |
+
+	levels ifEmpty: [ ^ #() ].
+
+	result := OrderedCollection new.
+	maxLevel := levels max.
+
+	1 to: maxLevel do: [ :level |
+		| start |
+
+		start := nil.
+
+		levels doWithIndex: [ :value :index |
+			value >= level
+				ifTrue: [
+					start ifNil: [ start := index ] ]
+				ifFalse: [
+					start ifNotNil: [
+						result add: {
+							level.
+							{ start. index - 1 } }.
+						start := nil ] ] ].
+
+		start ifNotNil: [
+			result add: {
+				level.
+				{ start. levels size } } ] ].
+
+	^ result asArray
+]
+
 { #category : 'accessing' }
 MicroUMLSequenceDiagram >> actorsAndMessages: aAndM [
 	actors := aAndM first.
@@ -79,6 +113,7 @@ MicroUMLSequenceDiagram >> drawLifeline: actor [
 			 dashArray: #( 5 5 );
 			 color: Color black;
 			 yourself).
+	self lifelineList: actor.
 	actorIndex := actor actor index.
 	messageIndex := messages size.
 	maxActivation := 0.
@@ -86,7 +121,6 @@ MicroUMLSequenceDiagram >> drawLifeline: actor [
 		(activationLevels at: { actorIndex. message }) > maxActivation 
 			ifTrue: [ maxActivation := activationLevels at: { actorIndex. message } ]
 		 ].
-	self halt.
 	1 to: maxActivation do: [ :activationLevel |
 		| start end |
 		start := end := 0.
@@ -132,6 +166,19 @@ MicroUMLSequenceDiagram >> lifelineHeight [
         + MicroUMLSDMessages bottomMargin
 ]
 
+{ #category : 'as yet unclassified' }
+MicroUMLSequenceDiagram >> lifelineList: actor [
+	| actorIndex boxSizes boxes result  |
+	actorIndex := actor actor index.
+	boxSizes := OrderedCollection new.
+	1 to: messages size do: [ :messageIndex |
+		boxSizes add: (activationLevels at: {actorIndex . messageIndex })
+		 ].
+	result := self activationIntervalsFor: boxSizes asArray.
+	
+	self halt.
+]
+
 { #category : 'roassal' }
 MicroUMLSequenceDiagram >> renderDiagram [
 	"Constructs and displays the sequence diagram on a canvas"
@@ -175,55 +222,6 @@ MicroUMLSequenceDiagram >> setActivationLevels [
 								activationLevels at: {from . idxReturn} put: prev - 1
 				 ] ] ].
 			 ]
-]
-
-{ #category : 'initialization' }
-MicroUMLSequenceDiagram >> setActivationLevels_old [
-
-	activationLevels := OrderedDictionary new.
-	actors do: [ :act | messages do: [ :msg | 
-			activationLevels at: {act actor index. msg message index} put: 0 ] ].
-	1 to: messages size do: [ :msgIndex |
-			| msg from to prev |
-			msg := messages at: msgIndex.
-			from := msg fromActor.
-			to := msg toActor.
-			prev := msgIndex = 1
-				        ifTrue: [ 0 ]
-				        ifFalse: [ activationLevels at: to at: (messages at: msgIndex - 1) ].
-			activationLevels at: to at: msg put: prev.
-			msg message activation
-				ifTrue: [
-						msg messageType = #call ifTrue: [ activationLevels at: to at: msg put: prev + 1 ].
-						msg messageType = #return ifTrue: [ activationLevels at: to at: msg put: prev - 1 ] ]
-				ifFalse: [  ] ].
-]
-
-{ #category : 'initialization' }
-MicroUMLSequenceDiagram >> setActivationLevels_old2 [
-
-	activationLevels := OrderedDictionary new.
-	actors do: [ :act | messages do: [ :msg | 
-			activationLevels at: {act actor index. msg message index} put: 0 ] ].
-	1 to: messages size do: [ :msgIndex |
-			| msg from to prev next |
-			msg := messages at: msgIndex.
-			from := msg message fromActor actor index.
-			to := msg message toActor actor index.
-			prev := msgIndex = 1
-				        ifTrue: [ 0 ]
-				        ifFalse: [ activationLevels at: {to . msgIndex - 1} ].
-			next := prev.
-			msg message activation
-				ifTrue: [
-						msg message messageType = #call ifTrue: 
-							[ next := prev + 1 ].
-						msg message messageType = #return ifTrue: 
-							[ next :=  prev - 1 ] ]
-				ifFalse: [  ].
-			msgIndex to: messages size do: [ :idx |
-				activationLevels at: {to . idx} put: next
-				 ] ].
 ]
 
 { #category : 'accessing' }
