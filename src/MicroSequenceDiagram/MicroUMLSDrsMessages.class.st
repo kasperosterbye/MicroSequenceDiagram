@@ -91,33 +91,6 @@ MicroUMLSDrsMessages class >> topMargin [
 ]
 
 { #category : 'drawing' }
-MicroUMLSDrsMessages >> draw [
-	"Draws a message line and label based on the message type and description"
-
-	| line label leftX |
-self halt.
-	leftX := message fromActor x min: message toActor x.
-	label := self
-   		drawLabel: message description
-   		at: leftX @ (y - 10).
-	message clickAction ifNotNil: [
-			label first color: Color red.
-			label first italic.
-			label first when: RSMouseClick do: [ :evt | message clickAction value ] for: self ].
-	line := RSPolyline new
-		        color: Color black;
-		        markerEnd: (RSShapeFactory arrow
-				         size: 10;
-				         color: Color black) asMarker;
-		        yourself.
-	message messageType = #call ifTrue: [ self drawCall: line ].
-	message messageType = #return ifTrue: [ self drawReturn: line ].
-	message messageType = #internal ifTrue: [ self drawInternal: line ].
-
-	^ { line } , label
-]
-
-{ #category : 'drawing' }
 MicroUMLSDrsMessages >> draw: activationLevels [
 
 	| line label direction activationWidth levelOffset
@@ -198,15 +171,6 @@ MicroUMLSDrsMessages >> draw: activationLevels [
 ]
 
 { #category : 'drawing' }
-MicroUMLSDrsMessages >> drawCall: line [
-	"Draws a call message line with an arrowhead, adjusting the offset based on the positions of the sender and receiver actors."
-    | offset |
-self halt.
-    offset := (message fromActor x > message toActor x) ifTrue: [ 5 ] ifFalse: [ -5 ].
-    line controlPoints: { message fromActor x @ y . (message toActor x + offset)  @ y }
-]
-
-{ #category : 'drawing' }
 MicroUMLSDrsMessages >> drawCall: line from: a to: b [
 	| leftToRight |
 	leftToRight := (message fromActor x <= message toActor x). "ifTrue: [ 5 ] ifFalse: [ -5 ]"
@@ -250,17 +214,6 @@ MicroUMLSDrsMessages >> drawLabel: aString at: aPoint [
 			@
 			(aPoint y + ((i - 1) * lineHeight)).
 		label ]
-]
-
-{ #category : 'drawing' }
-MicroUMLSDrsMessages >> drawReturn: line [
-	"Draws a return message line with a dashed line and arrowhead, adjusting the offset based on the positions of the sender and receiver actors"
-    | offset |
-self halt.
-    offset := (message fromActor x > message toActor x) ifTrue: [ 5 ] ifFalse: [ -5 ].
-    line 
-        controlPoints: { message fromActor x @ y. (message toActor x + offset) @ y };
-        dashArray: #(5 5)
 ]
 
 { #category : 'drawing' }
