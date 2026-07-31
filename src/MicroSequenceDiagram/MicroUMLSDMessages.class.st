@@ -76,30 +76,12 @@ Class {
 }
 
 { #category : 'accessing' }
-MicroUMLSDMessages class >> bottomMargin [
-	"Returns the bottom margin for the sequence diagram"
-    ^ 15
-]
-
-{ #category : 'accessing' }
-MicroUMLSDMessages class >> messageGap [
-	"Returns the gap between messages in the sequence diagram"
-    ^ 40
-]
-
-{ #category : 'accessing' }
-MicroUMLSDMessages class >> topMargin [
-	"Returns the top margin for the sequence diagram"
-    ^ 15
-]
-
-{ #category : 'accessing' }
 MicroUMLSDMessages >> activation [
 	^ activation 
 ]
 
 { #category : 'accessing' }
-MicroUMLSDMessages >> activationNesting [
+MicroUMLSDMessages >> activationOn [
 	activation := true.
 ]
 
@@ -132,7 +114,6 @@ MicroUMLSDMessages >> description: anObject [
 { #category : 'accessing' }
 MicroUMLSDMessages >> fromActor [
 	"Returns the actor from which the message is sent"
-
 	^ fromActor
 ]
 
@@ -156,7 +137,7 @@ MicroUMLSDMessages >> index: anObject [
 
 { #category : 'initialization' }
 MicroUMLSDMessages >> initialize [ 
-	
+	super initialize.
 	activation := false.
 ]
 

@@ -79,7 +79,7 @@ MicroUMLSequenceDiagram >> computeActorPositions [
 	"Computes the horizontal positions of actors based on message distances"
 
 	| actorGap maxDistance |
-	actorGap := MicroUMLSDActor actorGap.
+	actorGap := MicroUMLSDrsActor actorGap.
 	actors first x: actorGap.
 	2 to: actors size do: [ :index |
 			| a b messagesBetween |
@@ -101,7 +101,7 @@ MicroUMLSequenceDiagram >> computeActorPositions [
 MicroUMLSequenceDiagram >> computeMessagePositions [
 	"Computes the vertical positions of messages based on their order and a fixed gap"
     messages doWithIndex: [ :msg :i |
-        msg y: MicroUMLSDMessages topMargin + (i * MicroUMLSDMessages messageGap) ]
+        msg y: MicroUMLSDrsMessages topMargin + (i * MicroUMLSDrsMessages messageGap) ]
 ]
 
 { #category : 'roassal' }
@@ -114,8 +114,8 @@ MicroUMLSequenceDiagram >> drawActors [
 MicroUMLSequenceDiagram >> drawLifeline: actor [
 
 	canvas add: (RSLine new
-			 startPoint: actor x @ (MicroUMLSDActor boxHeight / 2);
-			 endPoint: actor x @ (MicroUMLSDActor boxHeight / 2 + self lifelineHeight);
+			 startPoint: actor x @ (MicroUMLSDrsActor boxHeight / 2);
+			 endPoint: actor x @ (MicroUMLSDrsActor boxHeight / 2 + self lifelineHeight);
 			 dashArray: #( 5 5 );
 			 color: Color black;
 			 yourself).
@@ -214,9 +214,9 @@ MicroUMLSequenceDiagram >> initialize [
 { #category : 'roassal' }
 MicroUMLSequenceDiagram >> lifelineHeight [
 	"Returns the total height of the lifeline based on the number of messages and fixed margins"
-    ^ MicroUMLSDMessages topMargin 
-        + (messages size * MicroUMLSDMessages messageGap) 
-        + MicroUMLSDMessages bottomMargin
+    ^ MicroUMLSDrsMessages topMargin 
+        + (messages size * MicroUMLSDrsMessages messageGap) 
+        + MicroUMLSDrsMessages bottomMargin
 ]
 
 { #category : 'as yet unclassified' }

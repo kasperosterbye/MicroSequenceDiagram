@@ -142,9 +142,8 @@ MicroUMLSDAstBuilder >> --> aString [
 	message := messages last.
 	messageType := #return.
 	message toActor 
-		ifNil: [ message toActor: message fromActor]
-		"ifNotNil: [ message fromActor lifeLineDownOn: messages size.]".
-	message activationNesting.
+		ifNil: [ message toActor: message fromActor].
+	message activationOn.
 	message
 			 description: aString;
 			 messageType: messageType.
@@ -160,11 +159,9 @@ MicroUMLSDAstBuilder >> -> to [
 
 { #category : 'logical operations' }
 MicroUMLSDAstBuilder >> ->+ to [
-	 | toActor |
-	 toActor := (actors at: to).
     messages last 
 		toActor: (actors at: to);
-	 	activationNesting.
+	 	activationOn.
     ^ self
 ]
 
@@ -211,6 +208,8 @@ MicroUMLSDAstBuilder >> initialize [
 { #category : 'accessing' }
 MicroUMLSDAstBuilder >> lastMethod: meth [
 	"Sets the last method used in a message for the builder"
+	self halt.
+	"Check kald from MicroUMLSDForCode"
 	lastMethod := meth
 ]
 

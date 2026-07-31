@@ -48,24 +48,6 @@ Class {
 }
 
 { #category : 'accessing' }
-MicroUMLSDActor class >> actorGap [
-	"Returns the gap between actors in a sequence diagram"
-    ^ 20 
-]
-
-{ #category : 'accessing' }
-MicroUMLSDActor class >> boxHeight [
-	"Returns the height of the box in a sequence diagram"
-    ^ 40
-]
-
-{ #category : 'accessing' }
-MicroUMLSDActor class >> boxPadding [
-	"Returns the padding for the box in a sequence diagram"
-    ^ 10 
-]
-
-{ #category : 'accessing' }
 MicroUMLSDActor >> clickAction [
 	"Returns the click action associated with the actor"
 	^ clickAction
