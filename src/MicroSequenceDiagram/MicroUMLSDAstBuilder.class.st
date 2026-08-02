@@ -102,11 +102,12 @@ MicroUMLSDAstBuilder class >> example5 [
     , 'A'
     , 'Login System' @ [ Transcript << 'Was here' << String lf ]
     , 'Database'
-    & 'A' -> 'Login System' => 'call'
+    & 'A' ->+ 'Login System' => 'call'
 	 & 'Login System' => 'Joe call'
     & 'Login System' -> 'Database' => ('verify', String lf, 'Now') 
 			@ [  Transcript << 'Kilroy' << String lf  ]
-    & 'Database' -> 'A' --> '')
+	 & 'Database' -> 'Login System' --> '1'
+    & 'Login System' -> 'A' --> '2')
 	renderDiagram
 ]
 

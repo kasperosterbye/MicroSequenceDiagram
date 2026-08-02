@@ -15,26 +15,19 @@ Class {
 
 { #category : 'instance creation' }
 MicroUMLSequenceDiagram class >> fromActorsAndMessages: aAndM [
-	| instanse rsActors reMessages |
+	| instance rsActors reMessages |
 	rsActors := (aAndM first collect: [ :a | a name -> (MicroUMLSDrsActor new actor: a) ]) asOrderedDictionary .
 	reMessages := aAndM second collect: [ :m | |rsM|
 		rsM := MicroUMLSDrsMessages new message: m; yourself.
 		rsM message fromActor: (rsActors at: rsM message fromActor name).
 		rsM message toActor: (rsActors at: rsM message toActor name).
 		rsM ].
-	instanse := self new.
-	instanse actorsAndMessages: { rsActors values. reMessages }.
-	^ instanse
+	instance := self new.
+	instance actorsAndMessages: { rsActors values. reMessages }.
+	^ instance
 ]
 
-{ #category : 'as yet unclassified' }
-MicroUMLSequenceDiagram >> activationCenterXFor: actor level: level [
-
-	level = 0 ifTrue: [ ^ actor x ].
-	^ actor x + ((level - 1) * 5)
-]
-
-{ #category : 'as yet unclassified' }
+{ #category : 'roassal' }
 MicroUMLSequenceDiagram >> activationIntervalsFor: levels [
 
 	| result maxLevel |
@@ -122,39 +115,6 @@ MicroUMLSequenceDiagram >> drawLifeline: actor [
 ]
 
 { #category : 'roassal' }
-MicroUMLSequenceDiagram >> drawLifeline_old: actor [
-
-	| rectangle actorIndex messageIndex maxActivation|
-	canvas add: (RSLine new
-			 startPoint: actor x @ (MicroUMLSDActor boxHeight / 2);
-			 endPoint: actor x @ (MicroUMLSDActor boxHeight / 2 + self lifelineHeight);
-			 dashArray: #( 5 5 );
-			 color: Color black;
-			 yourself).
-	self lifelineList: actor.
-	actorIndex := actor actor index.
-	messageIndex := messages size.
-	maxActivation := 0.
-	1 to: messageIndex do: [ :message |
-		(activationLevels at: { actorIndex. message }) > maxActivation 
-			ifTrue: [ maxActivation := activationLevels at: { actorIndex. message } ]
-		 ].
-	1 to: maxActivation do: [ :activationLevel |
-		| start end |
-		start := end := 0.
-		
-		 ].
-	rectangle := RSBox new
-		             translateTo: actor x @ 100;
-		             width: 10;
-		             height: 100;
-		             color: Color white;
-		             borderColor: Color black;
-		             yourself.
-	canvas add: rectangle
-]
-
-{ #category : 'roassal' }
 MicroUMLSequenceDiagram >> drawLifelines [
 	"Draws the lifelines for each actor on the canvas"
     actors do: [ :actor | 
@@ -167,8 +127,8 @@ MicroUMLSequenceDiagram >> drawLineActivations: actor [
 
 	| activations activationWidth levelOffset |
 
-	activationWidth := 10.
-	levelOffset := activationWidth / 2.
+	activationWidth := MicroUMLSDrsMessages activationOffset * 2.
+	levelOffset := MicroUMLSDrsMessages activationOffset .
 	activations := self lifelineList: actor.
 
 	activations do: [ :activation |
@@ -180,7 +140,6 @@ MicroUMLSequenceDiagram >> drawLineActivations: actor [
 		startY := (messages at: interval first) y.
 		endY := (messages at: interval second) y.
 		height := endY - startY.
-
 		rectangle := RSBox new
 			width: activationWidth;
 			height: height;
@@ -204,11 +163,8 @@ MicroUMLSequenceDiagram >> drawMessages [
 
 { #category : 'initialization' }
 MicroUMLSequenceDiagram >> initialize [
-	"Initialises the sequence diagram with empty collections for actors and messages, and sets the default gap between actors"
-	actors := OrderedCollection new.
-	messages := OrderedCollection new.
+	super initialize.
 	uiTitle := 'Sequence Diagram'.
-	"actorGap := MicroUMLSDActor actorGap."
 ]
 
 { #category : 'roassal' }
@@ -219,18 +175,13 @@ MicroUMLSequenceDiagram >> lifelineHeight [
         + MicroUMLSDrsMessages bottomMargin
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'roassal' }
 MicroUMLSequenceDiagram >> lifelineList: actor [
-	| actorIndex boxSizes boxes result  |
+	| actorIndex levels |
 	actorIndex := actor actor index.
-	boxSizes := OrderedCollection new.
-	1 to: messages size do: [ :messageIndex |
-		boxSizes add: (activationLevels at: {actorIndex . messageIndex })
-		 ].
-	result := self activationIntervalsFor: boxSizes asArray.
-	^ result.
-	
-	
+	levels := messages collect: [ :msg |
+		activationLevels at: { actorIndex. msg message index } ].
+	^ self activationIntervalsFor: levels
 ]
 
 { #category : 'roassal' }
@@ -249,7 +200,7 @@ MicroUMLSequenceDiagram >> renderDiagram [
 	canvas openWithTitle: uiTitle
 ]
 
-{ #category : 'initialization' }
+{ #category : 'roassal' }
 MicroUMLSequenceDiagram >> setActivationLevels [
 
 	activationLevels := OrderedDictionary new.
