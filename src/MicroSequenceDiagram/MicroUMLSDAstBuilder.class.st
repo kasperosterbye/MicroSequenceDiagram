@@ -96,7 +96,6 @@ MicroUMLSDAstBuilder class >> example35 [
 
 { #category : 'examples' }
 MicroUMLSDAstBuilder class >> example5 [
-	"Example demonstrating the creation and linking of UML elements"
 
 	(MicroUMLSDAstBuilder
     , 'A'
@@ -178,8 +177,7 @@ MicroUMLSDAstBuilder >> => aString [
 		messageType := #internal ].
    message
 			 description: aString;
-			 messageType: messageType ";
-			 lastMethod: lastMethod";
+			 messageType: messageType;
 			 yourself.
     ^ self
 ]
@@ -204,14 +202,6 @@ MicroUMLSDAstBuilder >> initialize [
 
 	actors := OrderedDictionary new.
 	messages := OrderedCollection new
-]
-
-{ #category : 'accessing' }
-MicroUMLSDAstBuilder >> lastMethod: meth [
-	"Sets the last method used in a message for the builder"
-	self halt.
-	"Check kald from MicroUMLSDForCode"
-	lastMethod := meth
 ]
 
 { #category : 'building' }

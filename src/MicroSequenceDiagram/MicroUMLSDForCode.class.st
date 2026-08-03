@@ -253,7 +253,6 @@ MicroUMLSDForCode >> ast47BuildPackageMessage: message [
 		ifTrue: [ 
 			(ignoreList includes: message third) ifFalse: [
 				message fourth ifFalse: [
-					astBuilder lastMethod: message fifth.
 					astBuilder & message first name => message third 
 						@ [ self openSubDiagramFor: message ]] ]]
 		ifFalse: [ 

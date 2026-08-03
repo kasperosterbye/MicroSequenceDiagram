@@ -42,27 +42,28 @@ MicroUMLSDrsMessages class >> topMargin [
 { #category : 'drawing' }
 MicroUMLSDrsMessages >> draw: activationLevels [
 
-	| activationOffset labelPadding fromLevel toLevel direction
-	  fromCenterX toCenterX startX endX messageIsInternal labelX label line  |
-	activationOffset := activationOffset := self class activationOffset.
+	| activationOffset labelPadding fromLevel toLevel 
+	  fromCenterX toCenterX direction startX endX internalStartX 
+	  messageIsInternal labelX label line  |
+	
+	activationOffset := self class activationOffset.
 	labelPadding := 5.
 	fromLevel := activationLevels at: {
 		message fromActor actor index.
 		message index }.
-
 	toLevel := activationLevels at: {
 		message toActor actor index.
 		message index }.
-
-	direction := message toActor x > message fromActor x
-		ifTrue: [ 1 ]
-		ifFalse: [ -1 ].
 
 	fromCenterX := fromLevel isZero
 		ifTrue: [ message fromActor x ]
 		ifFalse: [
 			message fromActor x
 				+ ((fromLevel - 1) * activationOffset) ].
+	
+	internalStartX := fromLevel isZero
+		ifTrue: [ fromCenterX ]
+		ifFalse: [ fromCenterX + activationOffset ].
 
 	toCenterX := toLevel isZero
 		ifTrue: [ message toActor x ]
@@ -70,15 +71,19 @@ MicroUMLSDrsMessages >> draw: activationLevels [
 			message toActor x
 				+ ((toLevel - 1) * activationOffset) ].
 
+	direction := message toActor x > message fromActor x
+		ifTrue: [ 1 ]
+		ifFalse: [ -1 ].
+		
 	startX := fromLevel isZero
 		ifTrue: [ fromCenterX ]
-		ifFalse: [
-			fromCenterX + (direction * activationOffset) ].
+		ifFalse: [ fromCenterX + (direction * activationOffset) ].
 
 	endX := toLevel isZero
 		ifTrue: [ toCenterX ]
 		ifFalse: [
 			toCenterX - (direction * activationOffset) ].
+
 	messageIsInternal := message messageType = #internal.
 	messageIsInternal ifFalse: [
 		endX := endX - (direction * activationOffset) ].
@@ -102,22 +107,19 @@ MicroUMLSDrsMessages >> draw: activationLevels [
 			message messageType = #return ifTrue: [
 				line dashArray: #(5 5) ]]
 		ifTrue: [
-			self drawInternal: line ].
+			self drawInternal: line fromX: internalStartX ].
 
 	^ { line } , label
 ]
 
 { #category : 'drawing' }
-MicroUMLSDrsMessages >> drawInternal: line [
-	"Draws an internal message line with a loopback shape, adjusting the offset based on the positions of the sender and receiver actors."
-    | x |
-    x := message fromActor x.
-    line controlPoints: { 
-        x @ y. 
-        (x + 25) @ y. 
-        (x + 25) @ (y + 15). 
-        (x + 5) @ (y + 15) 
-    }
+MicroUMLSDrsMessages >> drawInternal: line fromX: x [
+
+	line controlPoints: {
+		x @ y.
+		(x + 25) @ y.
+		(x + 25) @ (y + 15).
+		(x + 5) @ (y + 15) }
 ]
 
 { #category : 'drawing' }
