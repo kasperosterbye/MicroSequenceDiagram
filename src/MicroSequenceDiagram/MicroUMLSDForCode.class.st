@@ -257,7 +257,7 @@ MicroUMLSDForCode >> ast47BuildPackageMessage: message [
 						@ [ self openSubDiagramFor: message ]] ]]
 		ifFalse: [ 
 			message fourth
-					ifFalse: [ astBuilder & 'O' -> message second name => message third. ]
+					ifFalse: [ astBuilder & 'O' ->+ message second name => message third. ]
 					ifTrue: [ astBuilder & message second name -> 'O' --> message third ]]
 		
 
@@ -271,7 +271,7 @@ MicroUMLSDForCode >> ast48BuildExternalMessage: message [
 					ifFalse: [ astBuilder & message first name => message third ] ]
 		ifFalse: [
 				message fourth
-					ifFalse: [ astBuilder & message first name -> message second name => message third ]
+					ifFalse: [ astBuilder & message first name ->+ message second name => message third ]
 					ifTrue: [ astBuilder & message second name -> message first name --> message third ] ].
 ]
 
